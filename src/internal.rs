@@ -54,23 +54,27 @@ impl PrivateUrl {
     }
 
     /// `get_string` just returns a string
+    #[inline(always)]
     pub fn get_string<'a>(&'a self) -> &'a str {
         self.string_data.as_ref()
     }
 
     /// `get_scheme` returns the URL's scheme
+    #[inline(always)]
     pub fn get_scheme<'a>(&'a self) -> &'a str {
         self.url_data.scheme()
     }
 
     /// `get_username` returns the percentage decoded username
     /// if one is present.
+    #[inline(always)]
     pub fn get_username<'a>(&'a self) -> Option<&'a str> {
         self.username.iter().map(|arg| arg.as_ref()).next()
     }
 
     /// `get_password` returns the percentage decoded password
     /// if one is present.
+    #[inline(always)]
     pub fn get_password<'a>(&'a self) -> Option<&'a str> {
         self.password.iter().map(|arg| arg.as_ref()).next()
     }
@@ -78,11 +82,13 @@ impl PrivateUrl {
     /// `get_host` returns host information. This maybe a domain
     /// name, or IP address. You are encouraged to inspect the
     /// value if interested.
+    #[inline(always)]
     pub fn get_host<'a>(&'a self) -> Option<Host<&'a str>> {
         self.url_data.host()
     }
 
     /// `get_port` returns host information about the `port`.
+    #[inline(always)]
     pub fn get_port(&self) -> Option<u16> {
         self.url_data.port()
     }
@@ -102,17 +108,20 @@ impl PrivateUrl {
     }
 
     /// `get_path` returns the `path` component of the URL
+    #[inline(always)]
     pub fn get_path<'a>(&'a self) -> Option<&'a Path> {
         self.path.iter().map(|path| Path::new(path.as_ref())).next()
     }
 
     /// `get_path_str` returns the `path` component of the URL, as a `str` vs `Path`,
     /// which maybe preferable in some scenarios.
+    #[inline(always)]
     pub fn get_path_str<'a>(&'a self) -> Option<&'a str> {
         self.path.iter().map(|path| path.as_ref()).next()
     }
 
     /// `get_query_info` returns information about query parameters
+    #[inline(always)]
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
         match &self.full_query {
             &Option::None => None,
