@@ -14,15 +14,19 @@ use self::internal::PrivateUrl;
 pub use self::internal::{Host,QueryData,QueryValues};
 
 /// Url is an opque type for deserializing, and serializing Url's.
-/// Internally it uses an `Arc` to avoid additionally. Furthermore
-/// `fmt::Debug`, `fmt::Display`, and `hash::Hash` don't trigger
-/// additional allocations which a naive implementation may
-/// incurr.
+/// Internally it uses an `Arc` to avoid additionally memory usage
+/// when cloned. Furthermore `fmt::Debug`, `fmt::Display`, and
+/// `hash::Hash` don't trigger additional allocations which a
+/// naive implementation may incurr accidently.
 ///
 /// This means creating a new `Url` can cause a number of
 /// background allocations, but generally provided the value
-/// sticks around for a little while, and is cloned often
-/// this will be of little concern.
+/// sticks around for a little while this is beneficial.
+///
+/// # Note Percentage Encoding
+///
+/// Fields returned from this API will generally already be
+/// percentage decoded.
 ///
 /// # Note
 ///
@@ -53,7 +57,6 @@ impl Url {
         }) 
     }
 }
-
 impl hash::Hash for Url {
     #[inline(always)]
     fn hash<H>(&self, state: &mut H) 
