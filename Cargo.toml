@@ -1,0 +1,9 @@
+[package]
+name = "serde_url"
+version = "1.0.0"
+authors = ["William Laeder <codylaeder@gmail.com>"]
+edition = "2015"
+
+[dependencies]
+url = "1.7.2"
+serde = "1.0.88"
