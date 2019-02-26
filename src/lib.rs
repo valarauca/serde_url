@@ -116,8 +116,8 @@ pub trait UrlOp: AsRef<Url> {
 /// In this way a library may accept `AsRef<UrlOp>` instead
 /// of the opaque `Url` data type. This promotes better
 /// borrow handler behavior, and avoids re-parsing and
-/// and allocating Url's which are passed as `String`.
-///
+/// and allocating Url's which might become `String`s when
+/// passed for convience sake.
 #[derive(Clone)]
 pub struct Url {
     data: sync::Arc<PrivateUrl>

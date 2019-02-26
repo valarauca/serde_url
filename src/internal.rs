@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use std::iter::FromIterator;
 use std::path::Path;
+use std::net::{IpAddr,SocketAddr};
 
 use super::errors::UrlFault;
 
@@ -63,6 +64,19 @@ impl PrivateUrl {
     #[inline(always)]
     pub fn get_scheme<'a>(&'a self) -> &'a str {
         self.url_data.scheme()
+    }
+
+    /// `has_authority()` returns if the URL has an authority
+    #[inline(always)]
+    pub fn has_authority(&self) -> bool {
+        self.url_data.has_authority()
+    }
+
+    /// `cannot_be_a_base()` returns if the URL cannot be
+    /// a base URL
+    #[inline(always)]
+    pub fn cannot_be_a_base(&self) -> bool {
+        self.url_data.cannot_be_a_base()
     }
 
     /// `get_username` returns the percentage decoded username
@@ -180,6 +194,25 @@ pub enum QueryValues {
     Single(Box<str>),
     Multiple(Box<[Box<str>]>),
 }
+impl QueryValues {
+
+    /// `len` returns the length of the values. 
+    ///
+    /// # Note
+    ///
+    /// This may return 0 if `QueryValues::None` is present. This implies a key is present
+    /// but not a value.
+    pub fn len(&self) -> usize {
+        match self {
+            &QueryValues::None => 0,
+            &QueryValues::Single(_) => 1,
+            &QueryValues::Multiple(ref inner) => {
+                assert!(inner.len() > 1);
+                inner.len()
+            },
+        }
+    }
+}
 impl<'a> FromIterator<&'a str> for QueryValues {
     fn from_iter<T>(iter: T) -> Self
         where
@@ -206,6 +239,47 @@ pub struct Origin<'a> {
     pub host: Host<&'a str>,
     pub port: u16,
 }
+impl<'a> Origin<'a> {
+
+    /// `get_scheme` returns the Origin's scheme
+    pub fn get_scheme<'b>(&'b self) -> &'b str {
+        self.scheme
+    }
+
+    /// `get_port` returns the port
+    pub fn get_port(&self) -> u16 {
+        self.port
+    }
+
+    /// `get_socket_addr` returns a network address if the host
+    /// IS NOT a domain.
+    pub fn get_socket_addr(&self) -> Option<SocketAddr> {
+        let addr = match &self.host {
+            &Host::Domain(_) => None,
+            &Host::Ipv4(ref ipv4) => Some(IpAddr::from(ipv4.clone())),
+            &Host::Ipv6(ref ipv6) => Some(IpAddr::from(ipv6.clone())),
+        };
+        addr.into_iter()
+            .map(|ip| SocketAddr::from((ip, self.get_port())))
+            .next()
+    }
+
+    /// `is_domain` checks if this is a domain
+    pub fn is_domain(&self) -> bool {
+        match &self.host {
+            &Host::Domain(_) => true,
+            _ => false,
+        }
+    }
+
+    /// `get_domain()` returns the domain if this is a domain
+    pub fn get_domain<'b>(&'b self) -> Option<&'b str> {
+        match &self.host {
+            &Host::Domain(ref domain) => Some(domain),
+            _ => None,
+        }
+    }
+}
 
 #[inline(always)]
 fn boilerplate<'a,T>(input: T, err: UrlFault) 
@@ -228,3 +302,93 @@ fn full_details<'a>(arg: &'a str) -> Option<&'a str> {
     if arg.len() == 0 { None } else { Some(arg) }
 }
 
+
+mod test {
+
+    use super::UrlFault;
+    use super::PrivateUrl;
+
+    /*
+     * Test Suite Declaration
+     *
+     */ 
+    struct TestData {
+
+        // input URL to test
+        base_url: &'static str,
+
+        // `new` should fail with this error
+        error_expected: Option<UrlFault>,
+
+        // `get_string()` should return
+        get_string: &'static str,
+
+        // `get_scheme()` should return
+        get_scheme: &'static str,
+
+        // `get_username()` should return
+        get_username: Option<&'static str>,
+
+        // `get_password` should return
+        get_password: Option<&'static str>,
+    }
+    impl TestData {
+        fn validate(&self) -> Result<(),String> {
+
+            // parse output
+            let output = match PrivateUrl::new(self.base_url) {
+                Ok(output) => output,
+                Err(ref e) => {
+                    return match &self.error_expected {
+                        &Option::None => Err(format!("{:?} failed to parse {}", e, self.base_url)),
+                        &Option::Some(ref err) => {
+                            if err.eq(e) {
+                                Ok(())
+                            } else {
+                                Err(format!("found {:?} not {:?} while parsing {}", e, err, self.base_url))
+                            }
+                        } 
+                    }
+                }
+            };
+
+            // `get_string` check
+            if output.get_string() != self.get_string {
+                return Err(format!("called `get_string()` found {} not {}", output.get_string(), self.get_string));
+            }
+
+            // `get_scheme` check
+            if output.get_scheme() != self.get_scheme {
+                return Err(format!("called `get_scheme` found {} not {}", output.get_scheme(), self.get_scheme));
+            }
+
+            // `get_username` check
+            if output.get_username() != self.get_username {
+                return Err(format!("called `get_username` found {:?} not {:?}", output.get_username(), self.get_username));
+            }
+
+            // `get_password` check
+            if output.get_password() != self.get_password {
+                return Err(format!("called `get_password` found {:?} not {:?}", output.get_password(), self.get_password));
+            }
+
+            Ok(())
+        }
+    }
+
+
+    #[test]
+    fn sanity_check0() {
+    
+        let test_data = TestData {
+            base_url: "http://google.com/",
+            error_expected: None,
+            get_string: "http://google.com/",
+            get_scheme: "http",
+            get_username: None,
+            get_password: None,
+        };
+        
+        test_data.validate().unwrap();
+    }
+}
