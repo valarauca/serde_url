@@ -15,16 +15,18 @@ use super::url::percent_encoding::{percent_decode};
 pub struct PrivateUrl {
     url_data: Url,
     string_data: Box<str>,
+    input_data: Box<str>,
     username: Option<Box<str>>,
     password: Option<Box<str>>,
     path: Option<Box<str>>,
     full_query: Option<Box<str>>,
-    query_key_values: HashMap<String,QueryValues>,
+    query_key_values: HashMap<Box<str>,Option<Box<str>>>,
 }
 impl PrivateUrl {
 
     /// `new` handles parsing a URL input
     pub fn new(input: &str) -> Result<PrivateUrl,UrlFault> {
+        let input_data = input.to_string().into_boxed_str();
         let url_data = Url::parse(input)?;
         let string_data = url_data.to_string().into_boxed_str();
         let username = match boilerplate(url_data.username(), UrlFault::UserNameUtf8) {
@@ -48,16 +50,39 @@ impl PrivateUrl {
             Option::Some(Err(e)) => return Err(e),
         };
         let query_key_values = url_data.query_pairs()
-                .map(|(key,value)| (key.to_string(), value.split("+").collect::<QueryValues>()))
-                .collect::<HashMap<String,QueryValues>>();
+                .map(|(key,value)| -> (Box<str>,Option<Box<str>>) {
+                    let value: Option<Box<str>> = if value.len() != 0 {
+                        Some(value.to_string().into_boxed_str())
+                    } else { 
+                        None
+                    };
+                    let key = key.to_string().into_boxed_str();
+                    (key,value)
+                })
+                .collect::<HashMap<Box<str>,Option<Box<str>>>>();
 
-        Ok(PrivateUrl{ url_data, string_data, username, password, path, full_query, query_key_values } ) 
+        Ok(PrivateUrl{
+            url_data,
+            input_data,
+            string_data,
+            username,
+            password,
+            path,
+            full_query,
+            query_key_values
+        } ) 
     }
 
     /// `get_string` just returns a string
     #[inline(always)]
     pub fn get_string<'a>(&'a self) -> &'a str {
         self.string_data.as_ref()
+    }
+
+    /// `get_input` just returns the orginal input string
+    #[inline(always)]
+    pub fn get_input<'a>(&'a self) -> &'a str {
+        self.input_data.as_ref()
     }
 
     /// `get_scheme` returns the URL's scheme
@@ -152,7 +177,7 @@ impl PrivateUrl {
 /// itself.
 pub struct QueryData<'a> {
     full_query: &'a str,
-    collection: &'a HashMap<String,QueryValues>,
+    collection: &'a HashMap<Box<str>,Option<Box<str>>>,
 }
 impl<'a> QueryData<'a> {
 
@@ -161,7 +186,7 @@ impl<'a> QueryData<'a> {
         self.full_query
     }
 
-    /// `get_exists` checks if a query value exists
+    /// `key_exists` checks if a query value exists
     pub fn key_exists<S>(&self, key: &S) -> bool
         where
             S: AsRef<str>
@@ -173,61 +198,17 @@ impl<'a> QueryData<'a> {
     /// 
     /// ## Note
     ///
-    /// This method may return the strange value `Option::Some(QueryValues::None)`
+    /// This method may return the strange value `Option::Some(Some::None)`
     /// what this means is that a `key` is present, but it has no values associated
     /// with it, or those values have zero lenght.
-    pub fn get_key<'b, S>(&'b self, key: &S) -> Option<&'b QueryValues>
+    pub fn get_key<'b, S>(&'b self, key: &S) -> Option<Option<&'b str>>
         where
             S: AsRef<str>
     {
-        self.collection.get(key.as_ref())
-    }
-}
-
-/// QueryValues is a way of grouping query values.
-///
-/// * `None` exists as a query parameter maynot have a value, it may simply be present
-/// * `Single` implies no `+` split was useful
-/// * `Multiple` implies a `+` split rendered data. Please note: Multiple arguments are not well standardized, so this might not work 100% of the time for you usecase.
-pub enum QueryValues {
-    None,
-    Single(Box<str>),
-    Multiple(Box<[Box<str>]>),
-}
-impl QueryValues {
-
-    /// `len` returns the length of the values. 
-    ///
-    /// # Note
-    ///
-    /// This may return 0 if `QueryValues::None` is present. This implies a key is present
-    /// but not a value.
-    pub fn len(&self) -> usize {
-        match self {
-            &QueryValues::None => 0,
-            &QueryValues::Single(_) => 1,
-            &QueryValues::Multiple(ref inner) => {
-                assert!(inner.len() > 1);
-                inner.len()
-            },
-        }
-    }
-}
-impl<'a> FromIterator<&'a str> for QueryValues {
-    fn from_iter<T>(iter: T) -> Self
-        where
-            T: IntoIterator<Item = &'a str>
-    {
-        let data: Vec<Box<str>> = iter.into_iter()
-            .filter(|arg| arg.len() > 0)
-            .map(|arg| arg.to_string().into_boxed_str())
-            .collect();
-        if data.len() == 0 {
-            QueryValues::None
-        } else if data.len() == 1 {
-            QueryValues::Single(data[0].clone())
-        } else {
-            QueryValues::Multiple(data.into_boxed_slice())
+        match self.collection.get(key.as_ref()) {
+            Option::None => None,
+            Option::Some(&Option::None) => Some(None),
+            Option::Some(&Option::Some(ref arg)) => Some(Some(arg)),
         }
     }
 }
