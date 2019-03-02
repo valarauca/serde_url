@@ -61,22 +61,70 @@ impl Url {
     }
 
     /// `get_string` just returns a string
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com";
+    /// let url = Url::new(&data).unwrap();
+    /// assert_eq!(url.get_string(), "https://google.com/");
+    /// ```
+    ///
+    /// This method doesn't not require allocations, and its
+    /// value is used for the `AsRef<str>` and `AsRef<[u8]>`
+    /// implementations.
     pub fn get_string<'a>(&'a self) -> &'a str {
         self.data.get_string()
     }
 
     /// `get_input` returns the input argument
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com";
+    /// let url = Url::new(&data).unwrap();
+    /// assert!(data == url.get_input());
+    /// assert!(data != url.get_string());
+    /// ```
     pub fn get_input<'a>(&'a self) -> &'a str {
         self.data.get_input()
     }
 
     /// `get_scheme` returns the URL's scheme
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com";
+    /// let url = Url::new(&data).unwrap();
+    /// assert!(url.get_scheme() == "https");
+    /// ```
     pub fn get_scheme<'a>(&'a self) -> &'a str {
         self.data.get_scheme()
     }
 
     /// `get_username` returns the percentage decoded username
     /// if one is present.
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com";
+    /// let url = Url::new(&data).unwrap();
+    /// assert!(url.get_username() == Option::None);
+    /// ```
+    ///
+    /// If we include a username/password
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://janedoe:hunter2@google.com";
+    /// let url = Url::new(&data).unwrap();
+    /// assert!(url.get_username() == Option::Some("janedoe"));
+    /// assert!(url.get_password() == Option::Some("hunter2"));
+    /// ```
     pub fn get_username<'a>(&'a self) -> Option<&'a str> {
         self.data.get_username()
     }
