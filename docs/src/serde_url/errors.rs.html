@@ -44,11 +44,11 @@
 <span id="44">44</span>
 <span id="45">45</span>
 <span id="46">46</span>
+<span id="47">47</span>
 </pre><div class="example-wrap"><pre class="rust ">
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>,<span class="ident">Clone</span>,<span class="ident">PartialEq</span>,<span class="ident">Eq</span>,<span class="ident">PartialOrd</span>,<span class="ident">Ord</span>,<span class="ident">Hash</span>,<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">UrlFault</span> {
-
     <span class="comment">/*
      * types uplifted from `url::ParseError`
      *
@@ -58,7 +58,7 @@
     <span class="ident">InvalidPort</span>,
     <span class="ident">InvalidIpv4Address</span>,
     <span class="ident">InvalidIpv6Address</span>,
-    <span class="ident">InvalidDomainCharacter</span>,    
+    <span class="ident">InvalidDomainCharacter</span>,
     <span class="ident">RelativeUrlWithoutBase</span>,
     <span class="ident">RelativeUrlWithCannotBeABaseUrlIsABaseUrl</span>,
     <span class="ident">SetHostOnCannotBeABaseUrl</span>,
@@ -83,9 +83,11 @@
             <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">InvalidPort</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">InvalidPort</span>,
             <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">InvalidIpv4Address</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">InvalidIpv4Address</span>,
             <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">InvalidIpv6Address</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">InvalidIpv6Address</span>,
-            <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">InvalidDomainCharacter</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">InvalidDomainCharacter</span>,    
+            <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">InvalidDomainCharacter</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">InvalidDomainCharacter</span>,
             <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">RelativeUrlWithoutBase</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">RelativeUrlWithoutBase</span>,
-            <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">RelativeUrlWithCannotBeABaseBase</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">RelativeUrlWithCannotBeABaseUrlIsABaseUrl</span>,
+            <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">RelativeUrlWithCannotBeABaseBase</span> <span class="op">=&gt;</span> {
+                <span class="ident">UrlFault</span>::<span class="ident">RelativeUrlWithCannotBeABaseUrlIsABaseUrl</span>
+            }
             <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">SetHostOnCannotBeABaseUrl</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">SetHostOnCannotBeABaseUrl</span>,
             <span class="ident">url</span>::<span class="ident">ParseError</span>::<span class="ident">Overflow</span> <span class="op">=&gt;</span> <span class="ident">UrlFault</span>::<span class="ident">Overflow</span>,
         }

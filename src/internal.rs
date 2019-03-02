@@ -142,7 +142,8 @@ impl PrivateUrl {
             .map(|(host, port)| {
                 Origin {
                     scheme: self.url_data.scheme(),
-                    host, port
+                    host,
+                    port,
                 }
             })
             .next()

@@ -9,7 +9,6 @@ use std::hash;
 use std::path;
 use std::ops;
 
-
 extern crate url;
 extern crate serde;
 
@@ -24,10 +23,6 @@ pub use self::internal::{Origin, Host, QueryData};
 ///
 /// The goal is not URL maniplutation, but rather reading and
 /// writing URL's, as well as ensuring a consistent format.
-///
-/// # Note Percentage Encoding
-///
-/// Fields returned from this interface will be percentage encoding.
 ///
 /// # Note Usernames/Passwords
 ///
@@ -45,6 +40,17 @@ pub struct Url {
 impl Url {
     /// `new` is a generally entrypoint for constructing a `Url`
     /// also applicable are `from_str` and `serde::Deserialize`
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com";
+    /// let url = match Url::new(&data) {
+    ///     Err(e) => panic!("failed to parse url:{} error:{:?}", data, e),
+    ///     Ok(url) => url,
+    /// };
+    /// assert_eq!(url, "https://google.com/");
+    /// ```
     pub fn new<S>(input: &S) -> Result<Url, UrlFault>
     where
         S: AsRef<str>,
@@ -186,6 +192,30 @@ impl PartialEq<Vec<u8>> for Url {
         other.as_slice().eq(self.data.get_string().as_bytes())
     }
 }
+impl<'a> PartialEq<&'a Vec<u8>> for Url {
+    fn eq(&self, other: &&Vec<u8>) -> bool {
+        let other: &Vec<u8> = *other;
+        other.as_slice().eq(self.get_string().as_bytes())
+    }
+}
+impl<'a> PartialEq<&'a String> for Url {
+    fn eq(&self, other: &&String) -> bool {
+        let other: &String = *other;
+        other.as_str().eq(self.get_string())
+    }
+}
+impl<'a> PartialEq<&'a [u8]> for Url {
+    fn eq(&self, other: &&[u8]) -> bool {
+        let other: &[u8] = *other;
+        other.eq(self.get_string().as_bytes())
+    }
+}
+impl<'a> PartialEq<&'a str> for Url {
+    fn eq(&self, other: &&str) -> bool {
+        let other: &str = *other;
+        other.eq(self.get_string())
+    }
+}
 impl PartialEq<str> for Url {
     fn eq(&self, other: &str) -> bool {
         other.eq(self.data.as_ref().get_string())
@@ -203,6 +233,16 @@ impl<'a> PartialEq<::std::borrow::Cow<'a, str>> for Url {
 }
 impl<'a> PartialEq<::std::borrow::Cow<'a, [u8]>> for Url {
     fn eq(&self, other: &::std::borrow::Cow<'a, [u8]>) -> bool {
+        other.as_ref().eq(self.data.get_string().as_bytes())
+    }
+}
+impl<'a> PartialEq<&'a ::std::borrow::Cow<'a, str>> for Url {
+    fn eq(&self, other: &&::std::borrow::Cow<'a, str>) -> bool {
+        other.as_ref().eq(self.data.get_string())
+    }
+}
+impl<'a> PartialEq<&'a ::std::borrow::Cow<'a, [u8]>> for Url {
+    fn eq(&self, other: &&::std::borrow::Cow<'a, [u8]>) -> bool {
         other.as_ref().eq(self.data.get_string().as_bytes())
     }
 }

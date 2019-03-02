@@ -14,3 +14,6 @@ doc: docs
 .PHONY: docs
 docs:
 	cargo doc -j4 -q
+	cp docs/index.html target/doc/index.html
+	rm -rf docs
+	mv target/doc docs

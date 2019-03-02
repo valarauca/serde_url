@@ -278,7 +278,54 @@
 <span id="278">278</span>
 <span id="279">279</span>
 <span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
 </pre><div class="example-wrap"><pre class="rust ">
+
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">needless_lifetimes</span>,<span class="ident">clippy</span>::<span class="ident">option_option</span>,<span class="ident">clippy</span>::<span class="ident">clone_on_copy</span>)]</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
@@ -291,20 +338,16 @@
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde</span>;
 
 <span class="kw">mod</span> <span class="ident">errors</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">errors</span>::{<span class="ident">UrlFault</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">errors</span>::<span class="ident">UrlFault</span>;
 <span class="kw">mod</span> <span class="ident">internal</span>;
 <span class="kw">use</span> <span class="self">self</span>::<span class="ident">internal</span>::<span class="ident">PrivateUrl</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">internal</span>::{<span class="ident">Origin</span>,<span class="ident">Host</span>,<span class="ident">QueryData</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">internal</span>::{<span class="ident">Origin</span>, <span class="ident">Host</span>, <span class="ident">QueryData</span>};
 
 <span class="doccomment">/// Opaque type that can be serialized/deserialized and acts</span>
-<span class="doccomment">/// like a string. </span>
+<span class="doccomment">/// like a string.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The goal is not URL maniplutation, but rather reading and</span>
 <span class="doccomment">/// writing URL&#39;s, as well as ensuring a consistent format.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// # Note Percentage Encoding</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Fields returned from this interface will be percentage encoding.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Note Usernames/Passwords</span>
 <span class="doccomment">///</span>
@@ -317,19 +360,29 @@
 <span class="doccomment">/// Either as a utf8 string, or array of bytes.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Url</span> {
-    <span class="ident">data</span>: <span class="ident">sync</span>::<span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">PrivateUrl</span><span class="op">&gt;</span>
+    <span class="ident">data</span>: <span class="ident">sync</span>::<span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">PrivateUrl</span><span class="op">&gt;</span>,
 }
 <span class="kw">impl</span> <span class="ident">Url</span> {
-
     <span class="doccomment">/// `new` is a generally entrypoint for constructing a `Url`</span>
     <span class="doccomment">/// also applicable are `from_str` and `serde::Deserialize`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Url</span>,<span class="ident">UrlFault</span><span class="op">&gt;</span>
-        <span class="kw">where</span>
-            <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com&quot;;</span>
+    <span class="doccomment">/// let url = match Url::new(&amp;data) {</span>
+    <span class="doccomment">///     Err(e) =&gt; panic!(&quot;failed to parse url:{} error:{:?}&quot;, data, e),</span>
+    <span class="doccomment">///     Ok(url) =&gt; url,</span>
+    <span class="doccomment">/// };</span>
+    <span class="doccomment">/// assert_eq!(url, &quot;https://google.com/&quot;);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Url</span>, <span class="ident">UrlFault</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     {
-        <span class="prelude-val">Ok</span>( <span class="ident">Url</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">Url</span> {
             <span class="ident">data</span>: <span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">PrivateUrl</span>::<span class="ident">new</span>(<span class="ident">input</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>),
-        }) 
+        })
     }
 
     <span class="doccomment">/// `get_string` just returns a string</span>
@@ -345,7 +398,7 @@
     <span class="doccomment">/// `get_scheme` returns the URL&#39;s scheme</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_scheme</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span> {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_scheme</span>()
-    } 
+    }
 
     <span class="doccomment">/// `get_username` returns the percentage decoded username</span>
     <span class="doccomment">/// if one is present.</span>
@@ -418,9 +471,9 @@
 }
 <span class="kw">impl</span> <span class="ident">hash</span>::<span class="ident">Hash</span> <span class="kw">for</span> <span class="ident">Url</span> {
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">hash</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">H</span>) 
-        <span class="kw">where</span>
-            <span class="ident">H</span>: <span class="ident">hash</span>::<span class="ident">Hasher</span>
+    <span class="kw">fn</span> <span class="ident">hash</span><span class="op">&lt;</span><span class="ident">H</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">H</span>)
+    <span class="kw">where</span>
+        <span class="ident">H</span>: <span class="ident">hash</span>::<span class="ident">Hasher</span>,
     {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ref</span>().<span class="ident">get_string</span>().<span class="ident">hash</span>(<span class="ident">state</span>)
     }
@@ -440,16 +493,18 @@
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
     <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Url</span>, <span class="self">Self</span>::<span class="prelude-val">Err</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">PrivateUrl</span>::<span class="ident">new</span>(<span class="ident">s</span>)<span class="question-mark">?</span>);
-        <span class="prelude-val">Ok</span>( <span class="ident">Url</span>{ <span class="ident">data</span> } )
+        <span class="prelude-val">Ok</span>(<span class="ident">Url</span> { <span class="ident">data</span> })
     }
 }
 <span class="kw">impl</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">Url</span> {
     <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">Url</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">ptr_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">data</span>,<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">data</span>) <span class="op">||</span>
-        <span class="self">self</span>.<span class="ident">data</span>
-            .<span class="ident">as_ref</span>()
-            .<span class="ident">get_string</span>()
-            .<span class="ident">eq</span>(<span class="ident">other</span>.<span class="ident">data</span>.<span class="ident">as_ref</span>().<span class="ident">get_string</span>())
+        <span class="ident">sync</span>::<span class="ident">Arc</span>::<span class="ident">ptr_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">data</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">data</span>) <span class="op">||</span>
+            <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ref</span>().<span class="ident">get_string</span>().<span class="ident">eq</span>(
+                <span class="ident">other</span>
+                    .<span class="ident">data</span>
+                    .<span class="ident">as_ref</span>()
+                    .<span class="ident">get_string</span>(),
+            )
     }
 }
 <span class="kw">impl</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
@@ -462,6 +517,30 @@
         <span class="ident">other</span>.<span class="ident">as_slice</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>().<span class="ident">as_bytes</span>())
     }
 }
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="op">&amp;&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">let</span> <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>;
+        <span class="ident">other</span>.<span class="ident">as_slice</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">get_string</span>().<span class="ident">as_bytes</span>())
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="op">&amp;&amp;</span><span class="ident">String</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">let</span> <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">String</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>;
+        <span class="ident">other</span>.<span class="ident">as_str</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">get_string</span>())
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="op">&amp;&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">let</span> <span class="ident">other</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>;
+        <span class="ident">other</span>.<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">get_string</span>().<span class="ident">as_bytes</span>())
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="op">&amp;&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">let</span> <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>;
+        <span class="ident">other</span>.<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">get_string</span>())
+    }
+}
 <span class="kw">impl</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
     <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="ident">other</span>.<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ref</span>().<span class="ident">get_string</span>())
@@ -472,13 +551,23 @@
         <span class="ident">other</span>.<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>().<span class="ident">as_bytes</span>())
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>,<span class="ident">str</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
-    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>,<span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="ident">other</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>())
     }
 }
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>,[<span class="ident">u8</span>]<span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
-    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>,[<span class="ident">u8</span>]<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, [<span class="ident">u8</span>]<span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, [<span class="ident">u8</span>]<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">other</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>().<span class="ident">as_bytes</span>())
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> ::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="op">&amp;&amp;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">other</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>())
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">PartialEq</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> ::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, [<span class="ident">u8</span>]<span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="op">&amp;&amp;</span>::<span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, [<span class="ident">u8</span>]<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="ident">other</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>().<span class="ident">as_bytes</span>())
     }
 }
@@ -493,9 +582,9 @@
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">get_string</span>()
     }
 }
-<span class="kw">impl</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">Url</span> { }
-<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Url</span> { }
-<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Send</span> <span class="kw">for</span> <span class="ident">Url</span> { }
+<span class="kw">impl</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">Url</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Url</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Send</span> <span class="kw">for</span> <span class="ident">Url</span> {}
 
 
 <span class="comment">/*
@@ -506,14 +595,14 @@
  */</span>
 <span class="kw">impl</span> <span class="ident">serde</span>::<span class="ident">Serialize</span> <span class="kw">for</span> <span class="ident">Url</span> {
     <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S</span>::<span class="prelude-val">Ok</span>, <span class="ident">S</span>::<span class="ident">Error</span><span class="op">&gt;</span>
-        <span class="kw">where</span> 
-            <span class="ident">S</span>: <span class="ident">serde</span>::<span class="ident">Serializer</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">serde</span>::<span class="ident">Serializer</span>,
     {
         <span class="ident">serializer</span>.<span class="ident">serialize_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ref</span>().<span class="ident">get_string</span>())
     }
 }
 
-<span class="comment">/* 
+<span class="comment">/*
  *
  * Serde DeSerialize
  *
@@ -528,9 +617,9 @@
     <span class="kw">fn</span> <span class="ident">expecting</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Url&quot;</span>)
     }
-    <span class="kw">fn</span> <span class="ident">visit_str</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Value</span>,<span class="ident">E</span><span class="op">&gt;</span>
-        <span class="kw">where</span>
-            <span class="ident">E</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Error</span>
+    <span class="kw">fn</span> <span class="ident">visit_str</span><span class="op">&lt;</span><span class="ident">E</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Value</span>, <span class="ident">E</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">E</span>: <span class="ident">serde</span>::<span class="ident">de</span>::<span class="ident">Error</span>,
     {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
 
@@ -545,19 +634,18 @@
  *
  * Here we actually define `Deserialize` the trait
  * we just give serde the vistor.
- * 
+ *
  * In reality the visitor has no size, so it can&#39;t
  * we passed to a function, and magic happens at
  * compile time, kind of.
  */</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">serde</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Url</span> {
     <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>(<span class="ident">deserializer</span>: <span class="ident">D</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">D</span>::<span class="ident">Error</span><span class="op">&gt;</span>
-        <span class="kw">where</span>
-            <span class="ident">D</span>: <span class="ident">serde</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">D</span>: <span class="ident">serde</span>::<span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
         <span class="ident">deserializer</span>.<span class="ident">deserialize_str</span>(<span class="ident">UrlVisitor</span>)
     }
 }
-
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "serde_url";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
