@@ -1,0 +1,10 @@
+var ALIASES = {};
+ALIASES["idna"] = {};
+ALIASES["matches"] = {};
+ALIASES["percent_encoding"] = {};
+ALIASES["serde"] = {};
+ALIASES["serde_url"] = {};
+ALIASES["smallvec"] = {};
+ALIASES["unicode_bidi"] = {};
+ALIASES["unicode_normalization"] = {};
+ALIASES["url"] = {};
