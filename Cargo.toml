@@ -1,6 +1,6 @@
 [package]
 name = "serde_url"
-version = "0.0.1"
+version = "1.0"
 authors = ["William Cody Laeder <codylaeder@gmail.com>"]
 edition = "2015"
 
