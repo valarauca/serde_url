@@ -1,4 +1,7 @@
 
+#![allow(dead_code)]
+#![allow(clippy::needless_lifetimes,clippy::option_option,clippy::clone_on_copy)]
+
 use std::str;
 use std::fmt;
 use std::sync;
@@ -6,17 +9,18 @@ use std::hash;
 use std::path;
 use std::ops;
 
+
 extern crate url;
 extern crate serde;
 
 mod errors;
-pub use self::errors::{UrlFault};
+pub use self::errors::UrlFault;
 mod internal;
 use self::internal::PrivateUrl;
-pub use self::internal::{Origin,Host,QueryData};
+pub use self::internal::{Origin, Host, QueryData};
 
 /// Opaque type that can be serialized/deserialized and acts
-/// like a string. 
+/// like a string.
 ///
 /// The goal is not URL maniplutation, but rather reading and
 /// writing URL's, as well as ensuring a consistent format.
@@ -36,19 +40,18 @@ pub use self::internal::{Origin,Host,QueryData};
 /// Either as a utf8 string, or array of bytes.
 #[derive(Clone)]
 pub struct Url {
-    data: sync::Arc<PrivateUrl>
+    data: sync::Arc<PrivateUrl>,
 }
 impl Url {
-
     /// `new` is a generally entrypoint for constructing a `Url`
     /// also applicable are `from_str` and `serde::Deserialize`
-    pub fn new<S>(input: &S) -> Result<Url,UrlFault>
-        where
-            S: AsRef<str>
+    pub fn new<S>(input: &S) -> Result<Url, UrlFault>
+    where
+        S: AsRef<str>,
     {
-        Ok( Url {
+        Ok(Url {
             data: sync::Arc::new(PrivateUrl::new(input.as_ref())?),
-        }) 
+        })
     }
 
     /// `get_string` just returns a string
@@ -64,7 +67,7 @@ impl Url {
     /// `get_scheme` returns the URL's scheme
     pub fn get_scheme<'a>(&'a self) -> &'a str {
         self.data.get_scheme()
-    } 
+    }
 
     /// `get_username` returns the percentage decoded username
     /// if one is present.
@@ -137,9 +140,9 @@ impl AsRef<[u8]> for Url {
 }
 impl hash::Hash for Url {
     #[inline(always)]
-    fn hash<H>(&self, state: &mut H) 
-        where
-            H: hash::Hasher
+    fn hash<H>(&self, state: &mut H)
+    where
+        H: hash::Hasher,
     {
         self.data.as_ref().get_string().hash(state)
     }
@@ -159,16 +162,18 @@ impl str::FromStr for Url {
     #[inline(always)]
     fn from_str(s: &str) -> Result<Url, Self::Err> {
         let data = sync::Arc::new(PrivateUrl::new(s)?);
-        Ok( Url{ data } )
+        Ok(Url { data })
     }
 }
 impl PartialEq for Url {
     fn eq(&self, other: &Url) -> bool {
-        sync::Arc::ptr_eq(&self.data,&other.data) ||
-        self.data
-            .as_ref()
-            .get_string()
-            .eq(other.data.as_ref().get_string())
+        sync::Arc::ptr_eq(&self.data, &other.data) ||
+            self.data.as_ref().get_string().eq(
+                other
+                    .data
+                    .as_ref()
+                    .get_string(),
+            )
     }
 }
 impl PartialEq<String> for Url {
@@ -191,13 +196,13 @@ impl PartialEq<[u8]> for Url {
         other.eq(self.data.get_string().as_bytes())
     }
 }
-impl<'a> PartialEq<::std::borrow::Cow<'a,str>> for Url {
-    fn eq(&self, other: &::std::borrow::Cow<'a,str>) -> bool {
+impl<'a> PartialEq<::std::borrow::Cow<'a, str>> for Url {
+    fn eq(&self, other: &::std::borrow::Cow<'a, str>) -> bool {
         other.as_ref().eq(self.data.get_string())
     }
 }
-impl<'a> PartialEq<::std::borrow::Cow<'a,[u8]>> for Url {
-    fn eq(&self, other: &::std::borrow::Cow<'a,[u8]>) -> bool {
+impl<'a> PartialEq<::std::borrow::Cow<'a, [u8]>> for Url {
+    fn eq(&self, other: &::std::borrow::Cow<'a, [u8]>) -> bool {
         other.as_ref().eq(self.data.get_string().as_bytes())
     }
 }
@@ -212,9 +217,9 @@ impl ops::Deref for Url {
         self.data.get_string()
     }
 }
-impl Eq for Url { }
-unsafe impl Sync for Url { }
-unsafe impl Send for Url { }
+impl Eq for Url {}
+unsafe impl Sync for Url {}
+unsafe impl Send for Url {}
 
 
 /*
@@ -225,14 +230,14 @@ unsafe impl Send for Url { }
  */
 impl serde::Serialize for Url {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where 
-            S: serde::Serializer
+    where
+        S: serde::Serializer,
     {
         serializer.serialize_str(&self.data.as_ref().get_string())
     }
 }
 
-/* 
+/*
  *
  * Serde DeSerialize
  *
@@ -247,9 +252,9 @@ impl<'de> serde::de::Visitor<'de> for UrlVisitor {
     fn expecting(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "Url")
     }
-    fn visit_str<E>(self, value: &str) -> Result<Self::Value,E>
-        where
-            E: serde::de::Error
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
     {
         use std::str::FromStr;
 
@@ -264,17 +269,16 @@ impl<'de> serde::de::Visitor<'de> for UrlVisitor {
  *
  * Here we actually define `Deserialize` the trait
  * we just give serde the vistor.
- * 
+ *
  * In reality the visitor has no size, so it can't
  * we passed to a function, and magic happens at
  * compile time, kind of.
  */
 impl<'de> serde::Deserialize<'de> for Url {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-        where
-            D: serde::Deserializer<'de>
+    where
+        D: serde::Deserializer<'de>,
     {
         deserializer.deserialize_str(UrlVisitor)
     }
 }
-
