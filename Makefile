@@ -8,6 +8,7 @@ install-deps:
 test:
 	cargo test
 	cargo clippy
+	cargo fmt -- -f
 
 .PHONY: doc
 doc: docs
