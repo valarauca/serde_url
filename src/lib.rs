@@ -125,12 +125,24 @@ impl Url {
     /// assert!(url.get_username() == Option::Some("janedoe"));
     /// assert!(url.get_password() == Option::Some("hunter2"));
     /// ```
+    ///
+    /// Escape sequences are automatically handled.
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "ftps://john%20doe@google.com";
+    /// let url = Url::new(&data).unwrap();
+    /// assert!(url.get_username() == Option::Some("john doe"));
+    /// assert!(url.get_password() == Option::None);
+    /// assert!(url.get_scheme() == "ftps");
+    /// ```
     pub fn get_username<'a>(&'a self) -> Option<&'a str> {
         self.data.get_username()
     }
 
-    /// `get_password` returns the percentage decoded password
-    /// if one is present.
+    /// `get_password` returns the password from the username field.
+    /// See `get_username` for more information.
     pub fn get_password<'a>(&'a self) -> Option<&'a str> {
         self.data.get_password()
     }
@@ -138,11 +150,58 @@ impl Url {
     /// `get_host` returns host information. This maybe a domain
     /// name, or IP address. You are encouraged to inspect the
     /// value if interested.
+    ///
+    /// ```
+    /// use serde_url::{Url,Host};
+    /// use std::net::Ipv4Addr;
+    ///
+    /// let data = "https://192.168.0.1:8080/";
+    /// let url = Url::new(&data).unwrap();
+    /// match url.get_host().unwrap() {
+    ///     Host::Ipv4(ipaddr) => assert!(ipaddr == Ipv4Addr::new(192,168,0,1)),
+    ///     _ => panic!("should not occur"),
+    /// };
+    /// ```
+    ///
+    /// Also works with IPV6
+    ///
+    /// ```
+    /// use serde_url::{Url,Host};
+    /// use std::net::Ipv6Addr;
+    ///
+    /// let data = "https://[fe80::1]:8080/";
+    /// let url = Url::new(&data).unwrap();
+    /// match url.get_host().unwrap() {
+    ///     Host::Ipv6(ipaddr) => assert!(ipaddr == Ipv6Addr::new(0xfe80,0,0,0,0,0,0,0x01)),
+    ///     _ => panic!("should not occur"),
+    /// };
+    /// ```
+    ///
+    /// And with domains
+    ///
+    /// ```
+    /// use serde_url::{Url,Host};
+    ///
+    /// let data = "https://github.com:8080/";
+    /// let url = Url::new(&data).unwrap();
+    /// match url.get_host().unwrap() {
+    ///     Host::Domain(domain) => assert!(domain == "github.com"),
+    ///     _ => panic!("should not occur"),
+    /// };
+    /// ```
     pub fn get_host<'a>(&'a self) -> Option<Host<&'a str>> {
         self.data.get_host()
     }
 
     /// `get_port` returns host information about the `port`.
+    ///
+    /// ```
+    /// use serde_url::{Url,Host};
+    ///
+    /// let data = "https://github.com:8080/";
+    /// let url = Url::new(&data).unwrap();
+    /// assert!(url.get_port().unwrap() == 8080u16);
+    /// ```
     pub fn get_port(&self) -> Option<u16> {
         self.data.get_port()
     }
