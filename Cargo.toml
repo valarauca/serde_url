@@ -2,7 +2,17 @@
 name = "serde_url"
 version = "1.0.0"
 authors = ["William Cody Laeder <codylaeder@gmail.com>"]
+documentation = "https://valarauca.github.io/serde_url/serde_url/index.html"
+homepage = "https://github.com/valarauca/serde_url"
+repository = "https://github.com/valarauca/serde_url"
+readme = "README.md"
+keywords = ["url", "uri", "serialization", "deserialization"]
+categories = ["config", "filesystem", "api-binding"]
+description = "url package for working with serde"
 edition = "2015"
+
+[badges]
+travis-ci = { repository = "valarauca/serde_url", branch = "master" }
 
 [dependencies]
 url = "1.7.2"
