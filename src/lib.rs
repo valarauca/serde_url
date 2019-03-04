@@ -8,6 +8,8 @@ use std::sync;
 use std::hash;
 use std::path;
 use std::ops;
+use std::borrow::{Cow, Borrow, ToOwned};
+use std::cmp;
 
 extern crate url;
 extern crate serde;
@@ -60,7 +62,7 @@ impl Url {
         })
     }
 
-    /// `get_string` just returns a string
+    /// `get_string` returns the normalized URL representation
     ///
     /// ```
     /// use serde_url::Url;
@@ -70,9 +72,17 @@ impl Url {
     /// assert_eq!(url.get_string(), "https://google.com/");
     /// ```
     ///
-    /// This method doesn't not require allocations, and its
-    /// value is used for the `AsRef<str>` and `AsRef<[u8]>`
-    /// implementations.
+    /// This method does not require allocations.
+    ///
+    /// This representation of the URL will be used for most
+    /// common string tasks namely:
+    ///
+    /// - `AsRef<str>`
+    /// - `Deref<str>`
+    /// - `Hash`
+    /// - `AsRef<[u8]>`
+    ///
+    /// this allows for a great range of flexiability.
     pub fn get_string<'a>(&'a self) -> &'a str {
         self.data.get_string()
     }
@@ -239,18 +249,11 @@ impl Url {
         self.data.get_query_info()
     }
 }
-impl AsRef<Url> for Url {
-    #[inline(always)]
-    fn as_ref<'a>(&'a self) -> &'a Url {
-        self
-    }
-}
-impl AsRef<[u8]> for Url {
-    #[inline(always)]
-    fn as_ref<'a>(&'a self) -> &'a [u8] {
-        self.get_string().as_bytes()
-    }
-}
+
+/*
+ * One time only standard library stuff
+ *
+ */
 impl hash::Hash for Url {
     #[inline(always)]
     fn hash<H>(&self, state: &mut H)
@@ -278,6 +281,18 @@ impl str::FromStr for Url {
         Ok(Url { data })
     }
 }
+impl AsRef<Url> for Url {
+    #[inline(always)]
+    fn as_ref<'a>(&'a self) -> &'a Url {
+        self
+    }
+}
+impl ops::Deref for Url {
+    type Target = str;
+    fn deref<'a>(&'a self) -> &'a str {
+        self.data.get_string()
+    }
+}
 impl PartialEq for Url {
     fn eq(&self, other: &Url) -> bool {
         sync::Arc::ptr_eq(&self.data, &other.data) ||
@@ -289,26 +304,34 @@ impl PartialEq for Url {
             )
     }
 }
-impl PartialEq<String> for Url {
-    fn eq(&self, other: &String) -> bool {
+impl<'a> PartialEq<&'a Url> for Url {
+    fn eq(&self, other: &&Url) -> bool {
+        let other: &Url = *other;
+        other.eq(self)
+    }
+}
+impl Eq for Url {}
+unsafe impl Sync for Url {}
+unsafe impl Send for Url {}
+impl AsRef<[u8]> for Url {
+    #[inline(always)]
+    fn as_ref<'a>(&'a self) -> &'a [u8] {
+        self.get_string().as_bytes()
+    }
+}
+impl AsRef<str> for Url {
+    fn as_ref<'a>(&'a self) -> &'a str {
+        self.data.as_ref().get_string()
+    }
+}
+impl PartialEq<[u8]> for Url {
+    fn eq(&self, other: &[u8]) -> bool {
+        other.eq(self.data.get_string().as_bytes())
+    }
+}
+impl PartialEq<str> for Url {
+    fn eq(&self, other: &str) -> bool {
         other.eq(self.data.as_ref().get_string())
-    }
-}
-impl PartialEq<Vec<u8>> for Url {
-    fn eq(&self, other: &Vec<u8>) -> bool {
-        other.as_slice().eq(self.data.get_string().as_bytes())
-    }
-}
-impl<'a> PartialEq<&'a Vec<u8>> for Url {
-    fn eq(&self, other: &&Vec<u8>) -> bool {
-        let other: &Vec<u8> = *other;
-        other.as_slice().eq(self.get_string().as_bytes())
-    }
-}
-impl<'a> PartialEq<&'a String> for Url {
-    fn eq(&self, other: &&String) -> bool {
-        let other: &String = *other;
-        other.as_str().eq(self.get_string())
     }
 }
 impl<'a> PartialEq<&'a [u8]> for Url {
@@ -323,51 +346,119 @@ impl<'a> PartialEq<&'a str> for Url {
         other.eq(self.get_string())
     }
 }
-impl PartialEq<str> for Url {
-    fn eq(&self, other: &str) -> bool {
+impl<'a> PartialEq<&'a Vec<u8>> for Url {
+    fn eq(&self, other: &&Vec<u8>) -> bool {
+        let other: &Vec<u8> = *other;
+        other.as_slice().eq(self.get_string().as_bytes())
+    }
+}
+impl<'a> PartialEq<&'a String> for Url {
+    fn eq(&self, other: &&String) -> bool {
+        let other: &String = *other;
+        other.as_str().eq(self.get_string())
+    }
+}
+impl PartialEq<Vec<u8>> for Url {
+    fn eq(&self, other: &Vec<u8>) -> bool {
+        other.as_slice().eq(self.data.get_string().as_bytes())
+    }
+}
+impl PartialEq<String> for Url {
+    fn eq(&self, other: &String) -> bool {
         other.eq(self.data.as_ref().get_string())
     }
 }
-impl PartialEq<[u8]> for Url {
-    fn eq(&self, other: &[u8]) -> bool {
-        other.eq(self.data.get_string().as_bytes())
-    }
-}
-impl<'a> PartialEq<::std::borrow::Cow<'a, str>> for Url {
-    fn eq(&self, other: &::std::borrow::Cow<'a, str>) -> bool {
-        other.as_ref().eq(self.data.get_string())
-    }
-}
-impl<'a> PartialEq<::std::borrow::Cow<'a, [u8]>> for Url {
-    fn eq(&self, other: &::std::borrow::Cow<'a, [u8]>) -> bool {
+impl<'a> PartialEq<Cow<'a, [u8]>> for Url {
+    fn eq(&self, other: &Cow<'a, [u8]>) -> bool {
         other.as_ref().eq(self.data.get_string().as_bytes())
     }
 }
-impl<'a> PartialEq<&'a ::std::borrow::Cow<'a, str>> for Url {
-    fn eq(&self, other: &&::std::borrow::Cow<'a, str>) -> bool {
+impl<'a> PartialEq<Cow<'a, str>> for Url {
+    fn eq(&self, other: &Cow<'a, str>) -> bool {
         other.as_ref().eq(self.data.get_string())
     }
 }
-impl<'a> PartialEq<&'a ::std::borrow::Cow<'a, [u8]>> for Url {
-    fn eq(&self, other: &&::std::borrow::Cow<'a, [u8]>) -> bool {
+impl<'a> PartialEq<&'a Cow<'a, [u8]>> for Url {
+    fn eq(&self, other: &&Cow<'a, [u8]>) -> bool {
         other.as_ref().eq(self.data.get_string().as_bytes())
     }
 }
-impl AsRef<str> for Url {
-    fn as_ref<'a>(&'a self) -> &'a str {
-        self.data.as_ref().get_string()
+impl<'a> PartialEq<&'a Cow<'a, str>> for Url {
+    fn eq(&self, other: &&Cow<'a, str>) -> bool {
+        other.as_ref().eq(self.data.get_string())
     }
 }
-impl ops::Deref for Url {
-    type Target = str;
-    fn deref<'a>(&'a self) -> &'a str {
-        self.data.get_string()
-    }
-}
-impl Eq for Url {}
-unsafe impl Sync for Url {}
-unsafe impl Send for Url {}
 
+impl PartialOrd<[u8]> for Url {
+    fn partial_cmp(&self, other: &[u8]) -> Option<cmp::Ordering> {
+        other.partial_cmp(self.data.get_string().as_bytes())
+    }
+}
+impl PartialOrd<str> for Url {
+    fn partial_cmp(&self, other: &str) -> Option<cmp::Ordering> {
+        other.partial_cmp(self.data.as_ref().get_string())
+    }
+}
+impl<'a> PartialOrd<&'a [u8]> for Url {
+    fn partial_cmp(&self, other: &&[u8]) -> Option<cmp::Ordering> {
+        let other: &[u8] = *other;
+        other.partial_cmp(self.get_string().as_bytes())
+    }
+}
+impl<'a> PartialOrd<&'a str> for Url {
+    fn partial_cmp(&self, other: &&str) -> Option<cmp::Ordering> {
+        let other: &str = *other;
+        other.partial_cmp(self.get_string())
+    }
+}
+impl<'a> PartialOrd<&'a Vec<u8>> for Url {
+    fn partial_cmp(&self, other: &&Vec<u8>) -> Option<cmp::Ordering> {
+        let other: &Vec<u8> = *other;
+        other.as_slice().partial_cmp(self.get_string().as_bytes())
+    }
+}
+impl<'a> PartialOrd<&'a String> for Url {
+    fn partial_cmp(&self, other: &&String) -> Option<cmp::Ordering> {
+        let other: &String = *other;
+        other.as_str().partial_cmp(self.get_string())
+    }
+}
+impl PartialOrd<Vec<u8>> for Url {
+    fn partial_cmp(&self, other: &Vec<u8>) -> Option<cmp::Ordering> {
+        other.as_slice().partial_cmp(
+            self.data.get_string().as_bytes(),
+        )
+    }
+}
+impl PartialOrd<String> for Url {
+    fn partial_cmp(&self, other: &String) -> Option<cmp::Ordering> {
+        other.as_str().partial_cmp(self.data.as_ref().get_string())
+    }
+}
+impl<'a> PartialOrd<Cow<'a, [u8]>> for Url {
+    fn partial_cmp(&self, other: &Cow<'a, [u8]>) -> Option<cmp::Ordering> {
+        other.as_ref().partial_cmp(
+            self.data.get_string().as_bytes(),
+        )
+    }
+}
+impl<'a> PartialOrd<Cow<'a, str>> for Url {
+    fn partial_cmp(&self, other: &Cow<'a, str>) -> Option<cmp::Ordering> {
+        other.as_ref().partial_cmp(self.data.get_string())
+    }
+}
+impl<'a> PartialOrd<&'a Cow<'a, [u8]>> for Url {
+    fn partial_cmp(&self, other: &&Cow<'a, [u8]>) -> Option<cmp::Ordering> {
+        other.as_ref().partial_cmp(
+            self.data.get_string().as_bytes(),
+        )
+    }
+}
+impl<'a> PartialOrd<&'a Cow<'a, str>> for Url {
+    fn partial_cmp(&self, other: &&Cow<'a, str>) -> Option<cmp::Ordering> {
+        other.as_ref().partial_cmp(self.data.get_string())
+    }
+}
 
 /*
  * Serde Serialize
