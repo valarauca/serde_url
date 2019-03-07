@@ -1,18 +1,19 @@
 
 use std::collections::HashMap;
 use std::path::Path;
-use std::net::{IpAddr, SocketAddr};
+use std::net::{Ipv4Addr, Ipv6Addr, IpAddr, SocketAddr};
+use std::fmt::{self,Debug,Display};
+use std::hash::{Hash,Hasher};
 
 use super::errors::UrlFault;
 
-use super::url::Url;
-pub use super::url::Host;
+use super::url;
 use super::url::percent_encoding::percent_decode;
 
 /// PrivateUrl is a structure which constains the expanded
 /// data of a parsed URL
 pub struct PrivateUrl {
-    url_data: Url,
+    url_data: url::Url,
     string_data: Box<str>,
     input_data: Box<str>,
     username: Option<Box<str>>,
@@ -25,7 +26,7 @@ impl PrivateUrl {
     /// `new` handles parsing a URL input
     pub fn new(input: &str) -> Result<PrivateUrl, UrlFault> {
         let input_data = input.to_string().into_boxed_str();
-        let url_data = Url::parse(input)?;
+        let url_data = url::Url::parse(input)?;
         let string_data = url_data.to_string().into_boxed_str();
         let username = match boilerplate(url_data.username(), UrlFault::UserNameUtf8) {
             Option::None => None,
@@ -122,7 +123,12 @@ impl PrivateUrl {
     /// value if interested.
     #[inline(always)]
     pub fn get_host<'a>(&'a self) -> Option<Host<&'a str>> {
-        self.url_data.host()
+        match self.url_data.host() {
+            Option::Some(url::Host::Ipv4(ref arg)) => Some(Host::Ipv4(arg.clone())),
+            Option::Some(url::Host::Ipv6(ref arg)) => Some(Host::Ipv6(arg.clone())),
+            Option::Some(url::Host::Domain(ref arg)) => Some(Host::Domain(arg.clone())),
+            _ => None,
+        }
     }
 
     /// `get_port` returns host information about the `port`.
@@ -135,8 +141,7 @@ impl PrivateUrl {
     /// is present. This contains the `host` and `port`, as
     /// well as `scheme` information.
     pub fn get_origin<'a>(&'a self) -> Option<Origin<'a>> {
-        self.url_data
-            .host()
+        self.get_host()
             .into_iter()
             .zip(self.url_data.port())
             .map(|(host, port)| {
@@ -215,8 +220,80 @@ impl<'a> QueryData<'a> {
     }
 }
 
+/// Host encodes information about host file
+pub enum Host<T> {
+    Domain(T),
+    Ipv4(Ipv4Addr),
+    Ipv6(Ipv6Addr),
+}
+impl<T: Debug> Debug for Host<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Host::Domain(ref arg) => {
+                write!(f, "Domain({:?})", arg)
+            },
+            Host::Ipv4(ref arg) => {
+                write!(f, "Ipv4({})", arg)
+            },
+            Host::Ipv6(ref arg) => {
+                write!(f, "Ipv6({})", arg)
+            },
+        }
+    }
+}
+impl<T: Display> Display for Host<T> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Host::Domain(ref arg) => {
+                write!(f, "Domain({})", arg)
+            },
+            Host::Ipv4(ref arg) => {
+                write!(f, "Ipv4({})", arg)
+            },
+            Host::Ipv6(ref arg) => {
+                write!(f, "Ipv6({})", arg)
+            },
+        }
+    }
+}
+impl<T: Clone> Clone for Host<T> {
+    fn clone(&self) -> Host<T> {
+        match self {
+            Host::Domain(ref arg) => Host::Domain(arg.clone()),
+            Host::Ipv4(ref arg) => Host::Ipv4(arg.clone()),
+            Host::Ipv6(ref arg) => Host::Ipv6(arg.clone()),
+        }
+    }
+}
+impl<T: Hash> Hash for Host<T> {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        match self {
+            Host::Domain(ref arg) => arg.hash(hasher),
+            Host::Ipv4(ref arg) => arg.hash(hasher),
+            Host::Ipv6(ref arg) => arg.hash(hasher),
+        }
+    }
+}
+impl<T: PartialEq> PartialEq for Host<T> {
+    fn eq(&self, other: &Host<T>) -> bool {
+        match (self, other) {
+            (&Host::Domain(ref this),&Host::Domain(ref that)) => {
+                this.eq(that)
+            },
+            (&Host::Ipv4(ref this), &Host::Ipv4(ref that)) => {
+                this.eq(that)
+            },
+            (&Host::Ipv6(ref this), &Host::Ipv6(ref that)) => {
+                this.eq(that)
+            },
+            _ => false,
+        }
+    }
+}
+impl<T: Eq> Eq for Host<T> { }
+
 /// Origin defines a slightly incorrect origin structure
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct Origin<'a> {
     pub scheme: &'a str,
     pub host: Host<&'a str>,
