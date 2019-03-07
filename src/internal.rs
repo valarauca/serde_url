@@ -2,8 +2,8 @@
 use std::collections::HashMap;
 use std::path::Path;
 use std::net::{Ipv4Addr, Ipv6Addr, IpAddr, SocketAddr};
-use std::fmt::{self,Debug,Display};
-use std::hash::{Hash,Hasher};
+use std::fmt::{self, Debug, Display};
+use std::hash::{Hash, Hasher};
 
 use super::errors::UrlFault;
 
@@ -229,30 +229,18 @@ pub enum Host<T> {
 impl<T: Debug> Debug for Host<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Host::Domain(ref arg) => {
-                write!(f, "Domain({:?})", arg)
-            },
-            Host::Ipv4(ref arg) => {
-                write!(f, "Ipv4({})", arg)
-            },
-            Host::Ipv6(ref arg) => {
-                write!(f, "Ipv6({})", arg)
-            },
+            Host::Domain(ref arg) => write!(f, "Domain({:?})", arg),
+            Host::Ipv4(ref arg) => write!(f, "Ipv4({})", arg),
+            Host::Ipv6(ref arg) => write!(f, "Ipv6({})", arg),
         }
     }
 }
 impl<T: Display> Display for Host<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Host::Domain(ref arg) => {
-                write!(f, "Domain({})", arg)
-            },
-            Host::Ipv4(ref arg) => {
-                write!(f, "Ipv4({})", arg)
-            },
-            Host::Ipv6(ref arg) => {
-                write!(f, "Ipv6({})", arg)
-            },
+            Host::Domain(ref arg) => write!(f, "Domain({})", arg),
+            Host::Ipv4(ref arg) => write!(f, "Ipv4({})", arg),
+            Host::Ipv6(ref arg) => write!(f, "Ipv6({})", arg),
         }
     }
 }
@@ -277,20 +265,14 @@ impl<T: Hash> Hash for Host<T> {
 impl<T: PartialEq> PartialEq for Host<T> {
     fn eq(&self, other: &Host<T>) -> bool {
         match (self, other) {
-            (&Host::Domain(ref this),&Host::Domain(ref that)) => {
-                this.eq(that)
-            },
-            (&Host::Ipv4(ref this), &Host::Ipv4(ref that)) => {
-                this.eq(that)
-            },
-            (&Host::Ipv6(ref this), &Host::Ipv6(ref that)) => {
-                this.eq(that)
-            },
+            (&Host::Domain(ref this), &Host::Domain(ref that)) => this.eq(that),
+            (&Host::Ipv4(ref this), &Host::Ipv4(ref that)) => this.eq(that),
+            (&Host::Ipv6(ref this), &Host::Ipv6(ref that)) => this.eq(that),
             _ => false,
         }
     }
 }
-impl<T: Eq> Eq for Host<T> { }
+impl<T: Eq> Eq for Host<T> {}
 
 /// Origin defines a slightly incorrect origin structure
 #[derive(Clone, Debug)]

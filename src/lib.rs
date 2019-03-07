@@ -1,6 +1,7 @@
 
 #![allow(dead_code)]
-#![allow(clippy::needless_lifetimes,clippy::option_option,clippy::clone_on_copy)]
+#![allow(clippy::needless_lifetimes,
+clippy::option_option,clippy::clone_on_copy,clippy::clone_double_ref)]
 
 use std::str;
 use std::fmt;
@@ -57,9 +58,8 @@ impl Url {
     where
         S: AsRef<str>,
     {
-        Ok(Url {
-            data: sync::Arc::new(PrivateUrl::new(input.as_ref())?),
-        })
+        let data = sync::Arc::new(PrivateUrl::new(input.as_ref())?);
+        Ok(Url { data })
     }
 
     /// `get_string` returns the normalized URL representation
@@ -295,10 +295,7 @@ impl ops::Deref for Url {
 }
 impl PartialEq for Url {
     fn eq(&self, other: &Url) -> bool {
-        sync::Arc::ptr_eq(&self.data, &other.data) ||
-            self.get_string().eq(
-                other.get_string(),
-            )
+        sync::Arc::ptr_eq(&self.data, &other.data) || self.get_string().eq(other.get_string())
     }
 }
 impl<'a> PartialEq<&'a Url> for Url {
@@ -317,6 +314,7 @@ impl AsRef<[u8]> for Url {
     }
 }
 impl AsRef<str> for Url {
+    #[inline(always)]
     fn as_ref<'a>(&'a self) -> &'a str {
         self.get_string()
     }
@@ -324,6 +322,11 @@ impl AsRef<str> for Url {
 impl PartialEq<[u8]> for Url {
     fn eq(&self, other: &[u8]) -> bool {
         other.eq(self.data.get_string().as_bytes())
+    }
+}
+impl PartialEq<Box<[u8]>> for Url {
+    fn eq(&self, other: &Box<[u8]>) -> bool {
+        other.as_ref().eq(self.get_string().as_bytes())
     }
 }
 impl PartialEq<str> for Url {
@@ -335,6 +338,11 @@ impl<'a> PartialEq<&'a [u8]> for Url {
     fn eq(&self, other: &&[u8]) -> bool {
         let other: &[u8] = *other;
         other.eq(self.get_string().as_bytes())
+    }
+}
+impl<'a> PartialEq<&'a Box<[u8]>> for Url {
+    fn eq(&self, other: &&Box<[u8]>) -> bool {
+        other.as_ref().eq(self.get_string().as_bytes())
     }
 }
 impl<'a> PartialEq<&'a str> for Url {
@@ -396,6 +404,11 @@ impl PartialOrd<str> for Url {
         other.partial_cmp(self.get_string())
     }
 }
+impl PartialOrd<Box<[u8]>> for Url {
+    fn partial_cmp(&self, other: &Box<[u8]>) -> Option<cmp::Ordering> {
+        other.as_ref().partial_cmp(self.get_string().as_bytes())
+    }
+}
 impl<'a> PartialOrd<&'a [u8]> for Url {
     fn partial_cmp(&self, other: &&[u8]) -> Option<cmp::Ordering> {
         let other: &[u8] = *other;
@@ -406,6 +419,11 @@ impl<'a> PartialOrd<&'a str> for Url {
     fn partial_cmp(&self, other: &&str) -> Option<cmp::Ordering> {
         let other: &str = *other;
         other.partial_cmp(self.get_string())
+    }
+}
+impl<'a> PartialOrd<&'a Box<[u8]>> for Url {
+    fn partial_cmp(&self, other: &&Box<[u8]>) -> Option<cmp::Ordering> {
+        other.as_ref().partial_cmp(self.get_string().as_bytes())
     }
 }
 impl<'a> PartialOrd<&'a Vec<u8>> for Url {
@@ -422,9 +440,7 @@ impl<'a> PartialOrd<&'a String> for Url {
 }
 impl PartialOrd<Vec<u8>> for Url {
     fn partial_cmp(&self, other: &Vec<u8>) -> Option<cmp::Ordering> {
-        other.as_slice().partial_cmp(
-            self.get_string().as_bytes(),
-        )
+        other.as_slice().partial_cmp(self.get_string().as_bytes())
     }
 }
 impl PartialOrd<String> for Url {
@@ -434,9 +450,7 @@ impl PartialOrd<String> for Url {
 }
 impl<'a> PartialOrd<Cow<'a, [u8]>> for Url {
     fn partial_cmp(&self, other: &Cow<'a, [u8]>) -> Option<cmp::Ordering> {
-        other.as_ref().partial_cmp(
-            self.get_string().as_bytes(),
-        )
+        other.as_ref().partial_cmp(self.get_string().as_bytes())
     }
 }
 impl<'a> PartialOrd<Cow<'a, str>> for Url {
@@ -446,9 +460,7 @@ impl<'a> PartialOrd<Cow<'a, str>> for Url {
 }
 impl<'a> PartialOrd<&'a Cow<'a, [u8]>> for Url {
     fn partial_cmp(&self, other: &&Cow<'a, [u8]>) -> Option<cmp::Ordering> {
-        other.as_ref().partial_cmp(
-            self.get_string().as_bytes(),
-        )
+        other.as_ref().partial_cmp(self.get_string().as_bytes())
     }
 }
 impl<'a> PartialOrd<&'a Cow<'a, str>> for Url {

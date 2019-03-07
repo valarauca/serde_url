@@ -397,22 +397,82 @@
 <span id="397">397</span>
 <span id="398">398</span>
 <span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
 </pre><div class="example-wrap"><pre class="rust ">
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">net</span>::{<span class="ident">IpAddr</span>, <span class="ident">SocketAddr</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">net</span>::{<span class="ident">Ipv4Addr</span>, <span class="ident">Ipv6Addr</span>, <span class="ident">IpAddr</span>, <span class="ident">SocketAddr</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>, <span class="ident">Display</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">hash</span>::{<span class="ident">Hash</span>, <span class="ident">Hasher</span>};
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">errors</span>::<span class="ident">UrlFault</span>;
 
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">url</span>::<span class="ident">Url</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">url</span>::<span class="ident">Host</span>;
+<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">url</span>;
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">url</span>::<span class="ident">percent_encoding</span>::<span class="ident">percent_decode</span>;
 
 <span class="doccomment">/// PrivateUrl is a structure which constains the expanded</span>
 <span class="doccomment">/// data of a parsed URL</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PrivateUrl</span> {
-    <span class="ident">url_data</span>: <span class="ident">Url</span>,
+    <span class="ident">url_data</span>: <span class="ident">url</span>::<span class="ident">Url</span>,
     <span class="ident">string_data</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     <span class="ident">input_data</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     <span class="ident">username</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>,
@@ -425,7 +485,7 @@
     <span class="doccomment">/// `new` handles parsing a URL input</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">PrivateUrl</span>, <span class="ident">UrlFault</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">input_data</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">to_string</span>().<span class="ident">into_boxed_str</span>();
-        <span class="kw">let</span> <span class="ident">url_data</span> <span class="op">=</span> <span class="ident">Url</span>::<span class="ident">parse</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">url_data</span> <span class="op">=</span> <span class="ident">url</span>::<span class="ident">Url</span>::<span class="ident">parse</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">string_data</span> <span class="op">=</span> <span class="ident">url_data</span>.<span class="ident">to_string</span>().<span class="ident">into_boxed_str</span>();
         <span class="kw">let</span> <span class="ident">username</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">boilerplate</span>(<span class="ident">url_data</span>.<span class="ident">username</span>(), <span class="ident">UrlFault</span>::<span class="ident">UserNameUtf8</span>) {
             <span class="prelude-ty">Option</span>::<span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
@@ -522,7 +582,12 @@
     <span class="doccomment">/// value if interested.</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_host</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Host</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;&gt;</span> {
-        <span class="self">self</span>.<span class="ident">url_data</span>.<span class="ident">host</span>()
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">url_data</span>.<span class="ident">host</span>() {
+            <span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="ident">url</span>::<span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="ident">arg</span>.<span class="ident">clone</span>())),
+            <span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="ident">url</span>::<span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="ident">arg</span>.<span class="ident">clone</span>())),
+            <span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="ident">url</span>::<span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="ident">arg</span>.<span class="ident">clone</span>())),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+        }
     }
 
     <span class="doccomment">/// `get_port` returns host information about the `port`.</span>
@@ -535,8 +600,7 @@
     <span class="doccomment">/// is present. This contains the `host` and `port`, as</span>
     <span class="doccomment">/// well as `scheme` information.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_origin</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Origin</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
-        <span class="self">self</span>.<span class="ident">url_data</span>
-            .<span class="ident">host</span>()
+        <span class="self">self</span>.<span class="ident">get_host</span>()
             .<span class="ident">into_iter</span>()
             .<span class="ident">zip</span>(<span class="self">self</span>.<span class="ident">url_data</span>.<span class="ident">port</span>())
             .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">host</span>, <span class="ident">port</span>)<span class="op">|</span> {
@@ -615,8 +679,62 @@
     }
 }
 
+<span class="doccomment">/// Host encodes information about host file</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">Domain</span>(<span class="ident">T</span>),
+    <span class="ident">Ipv4</span>(<span class="ident">Ipv4Addr</span>),
+    <span class="ident">Ipv6</span>(<span class="ident">Ipv6Addr</span>),
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Domain({:?})&quot;</span>, <span class="ident">arg</span>),
+            <span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Ipv4({})&quot;</span>, <span class="ident">arg</span>),
+            <span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Ipv6({})&quot;</span>, <span class="ident">arg</span>),
+        }
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Display</span><span class="op">&gt;</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Domain({})&quot;</span>, <span class="ident">arg</span>),
+            <span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Ipv4({})&quot;</span>, <span class="ident">arg</span>),
+            <span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Ipv6({})&quot;</span>, <span class="ident">arg</span>),
+        }
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="ident">arg</span>.<span class="ident">clone</span>()),
+            <span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="ident">arg</span>.<span class="ident">clone</span>()),
+            <span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="ident">arg</span>.<span class="ident">clone</span>()),
+        }
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Hash</span><span class="op">&gt;</span> <span class="ident">Hash</span> <span class="kw">for</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">hash</span><span class="op">&lt;</span><span class="ident">H</span>: <span class="ident">Hasher</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hasher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">H</span>) {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="ident">arg</span>.<span class="ident">hash</span>(<span class="ident">hasher</span>),
+            <span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="ident">arg</span>.<span class="ident">hash</span>(<span class="ident">hasher</span>),
+            <span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>) <span class="op">=&gt;</span> <span class="ident">arg</span>.<span class="ident">hash</span>(<span class="ident">hasher</span>),
+        }
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">PartialEq</span><span class="op">&gt;</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> (<span class="self">self</span>, <span class="ident">other</span>) {
+            (<span class="kw-2">&amp;</span><span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">this</span>), <span class="kw-2">&amp;</span><span class="ident">Host</span>::<span class="ident">Domain</span>(<span class="kw-2">ref</span> <span class="ident">that</span>)) <span class="op">=&gt;</span> <span class="ident">this</span>.<span class="ident">eq</span>(<span class="ident">that</span>),
+            (<span class="kw-2">&amp;</span><span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">this</span>), <span class="kw-2">&amp;</span><span class="ident">Host</span>::<span class="ident">Ipv4</span>(<span class="kw-2">ref</span> <span class="ident">that</span>)) <span class="op">=&gt;</span> <span class="ident">this</span>.<span class="ident">eq</span>(<span class="ident">that</span>),
+            (<span class="kw-2">&amp;</span><span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">this</span>), <span class="kw-2">&amp;</span><span class="ident">Host</span>::<span class="ident">Ipv6</span>(<span class="kw-2">ref</span> <span class="ident">that</span>)) <span class="op">=&gt;</span> <span class="ident">this</span>.<span class="ident">eq</span>(<span class="ident">that</span>),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+}
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Eq</span><span class="op">&gt;</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {}
+
 <span class="doccomment">/// Origin defines a slightly incorrect origin structure</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Origin</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="ident">scheme</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
     <span class="kw">pub</span> <span class="ident">host</span>: <span class="ident">Host</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span>,
