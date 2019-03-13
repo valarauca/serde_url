@@ -12,6 +12,9 @@ use std::ops;
 use std::borrow::{Cow, Borrow, ToOwned};
 use std::cmp;
 
+#[macro_use]
+extern crate lazy_static;
+extern crate regex;
 extern crate url;
 extern crate serde;
 
@@ -19,7 +22,7 @@ mod errors;
 pub use self::errors::UrlFault;
 mod internal;
 use self::internal::PrivateUrl;
-pub use self::internal::{Origin, Host, QueryData};
+pub use self::internal::{Origin, Host};
 
 /// Opaque type that can be serialized/deserialized and acts
 /// like a string.
@@ -244,10 +247,12 @@ impl Url {
         self.data.get_path_str()
     }
 
+/*
     /// `get_query_info` returns information about query parameters
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
         self.data.get_query_info()
     }
+*/
 }
 
 /*

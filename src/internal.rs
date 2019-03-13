@@ -167,6 +167,8 @@ impl PrivateUrl {
         self.path.iter().map(|path| path.as_ref()).next()
     }
 
+
+/*
     /// `get_query_info` returns information about query parameters
     #[inline(always)]
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
@@ -178,30 +180,83 @@ impl PrivateUrl {
             }),
         }
     }
+*/
 }
+
+
+/// UrlParameterValue encodes the myriad different values
+/// that can be represented by a `url` parameter.
+pub struct UrlParameterValue<'a> {
+    string_value: &'a str,
+    internal: Option<Box<[&'a str]>>,
+}
+impl<'a> UrlParameterValue<'a> {
+
+    /// `get_string` returns the percentage decoded value
+    pub fn get_string<'b>(&'b self) -> &'b str {
+        &self.string_value
+    }
+
+    /// `get_values` returns if there are multiple values for a representation
+    pub fn get_values<'b>(&'b self) -> Option<&'b [&'b str]> {
+         match self.internal {
+             Option::None => None,
+             Option::Some(ref internal) => Some(internal),
+         }
+    }
+}
+   
 
 /// QueryData contains information about the URL's query key
 /// values. As well as information about the query string
 /// itself.
 pub struct QueryData<'a> {
     full_query: &'a str,
-    collection: &'a HashMap<Box<str>, Option<Box<str>>>,
+    collection: &'a Vec<(Box<str>,Option<Box<str>>)>,
 }
 impl<'a> QueryData<'a> {
+
     /// `get_full_query` attempts to return the percentage decoded query string
     pub fn get_full_query<'b>(&'b self) -> &'b str {
         self.full_query
     }
 
     /// `key_exists` checks if a query value exists
-    pub fn key_exists<S>(&self, key: &S) -> bool
+    pub fn key_exists<S>(&self, search_term: &S) -> bool
     where
         S: AsRef<str>,
     {
-        self.collection.get(key.as_ref()).is_some()
+        self.collection
+            .iter()
+            .filter(|(key,_)| -> bool { key.as_ref().eq(search_term.as_ref()) } )
+            .next()
+            .is_some()
     }
 
-    /// `get_key` returns the value(s) associated with a key.
+    pub fn get_first_value<'b, S>(&'b self, search_term: &S) -> Option<&'b str>
+    where
+        S: AsRef<str>,
+    {
+
+        /*
+        /// declare a function in the function b/c lifetimes are hard
+        #[inline(always)]
+        fn borrow_checker(arg: Option<&Box<str>>) -> Option<&'b str> {
+           match arg {
+               Option::Some(boxxxed_stir) => Some(boxxed_stir.as_ref()),
+               Option::None => None,
+        }
+        */
+
+        self.collection
+            .iter()
+            .filter(|(key,_)| -> bool { key.as_ref().eq(search_term.as_ref()) } )
+            .flat_map(|(_,value) | value )
+            .next()
+    }
+
+/*
+    /// `get_value` returns the value(s) associated with a key.
     ///
     /// ## Note
     ///
@@ -218,7 +273,9 @@ impl<'a> QueryData<'a> {
             Option::Some(&Option::Some(ref arg)) => Some(Some(arg)),
         }
     }
+*/
 }
+
 
 /// Host encodes information about host file
 pub enum Host<T> {

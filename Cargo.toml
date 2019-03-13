@@ -1,6 +1,6 @@
 [package]
 name = "serde_url"
-version = "1.0.0"
+version = "0.9.0"
 authors = ["William Cody Laeder <codylaeder@gmail.com>"]
 documentation = "https://valarauca.github.io/serde_url/serde_url/index.html"
 homepage = "https://github.com/valarauca/serde_url"
@@ -17,3 +17,5 @@ travis-ci = { repository = "valarauca/serde_url", branch = "master" }
 [dependencies]
 url = "1.7.2"
 serde = "1.0.88"
+regex = "1.0.0"
+lazy_static = "1.0.0"
