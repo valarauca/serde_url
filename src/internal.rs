@@ -204,6 +204,16 @@ impl<'a> UrlParameterValue<'a> {
              Option::Some(ref internal) => Some(internal),
          }
     }
+
+    /*
+    fn duck_typing<'b,I,T>(duck: I) -> Option<UrlParameterValue<'b>>
+    where
+        T: Into<Option<&'b str>>,
+        I: Into<Option<IntoIterator<Item=A>>>,
+    {
+        arg.into().into_iter().flat_map(|iter| iter)
+    }
+    */
 }
    
 
@@ -238,21 +248,11 @@ impl<'a> QueryData<'a> {
         S: AsRef<str>,
     {
 
-        /*
-        /// declare a function in the function b/c lifetimes are hard
-        #[inline(always)]
-        fn borrow_checker(arg: Option<&Box<str>>) -> Option<&'b str> {
-           match arg {
-               Option::Some(boxxxed_stir) => Some(boxxed_stir.as_ref()),
-               Option::None => None,
-        }
-        */
-
-        self.collection
+        borrow_checker(self.collection
             .iter()
             .filter(|(key,_)| -> bool { key.as_ref().eq(search_term.as_ref()) } )
             .flat_map(|(_,value) | value )
-            .next()
+            .next())
     }
 
 /*
@@ -402,6 +402,13 @@ fn full_details<'a>(arg: &'a str) -> Option<&'a str> {
     if arg.is_empty() { None } else { Some(arg) }
 }
 
+#[inline(always)]
+fn borrow_checker<'a>(arg: Option<&'a Box<str>>) -> Option<&'a str> {
+    match arg {
+        Option::Some(data) => Some(&*data),
+        Option::None => None
+    }
+}
 
 mod test {
 
@@ -513,3 +520,4 @@ mod test {
         test_data.validate().unwrap();
     }
 }
+
