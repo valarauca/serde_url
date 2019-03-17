@@ -1,7 +1,8 @@
 
-#![allow(dead_code,unused_imports)]
+#![allow(dead_code)]
 #![allow(clippy::needless_lifetimes,
-clippy::option_option,clippy::clone_on_copy,clippy::clone_double_ref)]
+clippy::option_option,clippy::clone_on_copy,clippy::clone_double_ref,
+clippy::filter_next,clippy::match_as_ref,clippy::type_complexity)]
 
 use std::str;
 use std::fmt;
@@ -9,12 +10,9 @@ use std::sync;
 use std::hash;
 use std::path;
 use std::ops;
-use std::borrow::{Cow, Borrow, ToOwned};
+use std::borrow::Cow;
 use std::cmp;
 
-#[macro_use]
-extern crate lazy_static;
-extern crate regex;
 extern crate url;
 extern crate serde;
 
