@@ -20,7 +20,7 @@ pub struct PrivateUrl {
     password: Option<Box<str>>,
     path: Option<Box<str>>,
     full_query: Option<Box<str>>,
-    query_key_values: HashMap<Box<str>, Option<Box<str>>>,
+    query_key_values: Box<[(Box<str>, Option<Box<str>>)]>,
 }
 impl PrivateUrl {
     /// `new` handles parsing a URL input
@@ -59,7 +59,8 @@ impl PrivateUrl {
                 let key = key.to_string().into_boxed_str();
                 (key, value)
             })
-            .collect::<HashMap<Box<str>, Option<Box<str>>>>();
+            .collect::<Vec<(Box<str>, Option<Box<str>>)>>()
+            .into_boxed_slice();
 
         Ok(PrivateUrl {
             url_data,
@@ -168,7 +169,7 @@ impl PrivateUrl {
     }
 
 
-/*
+    /*
     /// `get_query_info` returns information about query parameters
     #[inline(always)]
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
@@ -191,7 +192,6 @@ pub struct UrlParameterValue<'a> {
     internal: Option<Box<[&'a str]>>,
 }
 impl<'a> UrlParameterValue<'a> {
-
     /// `get_string` returns the percentage decoded value
     pub fn get_string<'b>(&'b self) -> &'b str {
         &self.string_value
@@ -199,10 +199,10 @@ impl<'a> UrlParameterValue<'a> {
 
     /// `get_values` returns if there are multiple values for a representation
     pub fn get_values<'b>(&'b self) -> Option<&'b [&'b str]> {
-         match self.internal {
-             Option::None => None,
-             Option::Some(ref internal) => Some(internal),
-         }
+        match self.internal {
+            Option::None => None,
+            Option::Some(ref internal) => Some(internal),
+        }
     }
 
     /*
@@ -215,17 +215,16 @@ impl<'a> UrlParameterValue<'a> {
     }
     */
 }
-   
+
 
 /// QueryData contains information about the URL's query key
 /// values. As well as information about the query string
 /// itself.
 pub struct QueryData<'a> {
     full_query: &'a str,
-    collection: &'a Vec<(Box<str>,Option<Box<str>>)>,
+    collection: &'a [(Box<str>, Option<Box<str>>)],
 }
 impl<'a> QueryData<'a> {
-
     /// `get_full_query` attempts to return the percentage decoded query string
     pub fn get_full_query<'b>(&'b self) -> &'b str {
         self.full_query
@@ -238,24 +237,71 @@ impl<'a> QueryData<'a> {
     {
         self.collection
             .iter()
-            .filter(|(key,_)| -> bool { key.as_ref().eq(search_term.as_ref()) } )
+            .filter(|(key, _)| -> bool { key.as_ref().eq(search_term.as_ref()) })
             .next()
             .is_some()
     }
 
-    pub fn get_first_value<'b, S>(&'b self, search_term: &S) -> Option<&'b str>
+    /// returns the first value for a key.
+    pub fn get_first_value_for<'b, S>(&'b self, search_term: &S) -> Option<&'b str>
     where
         S: AsRef<str>,
     {
-
-        borrow_checker(self.collection
-            .iter()
-            .filter(|(key,_)| -> bool { key.as_ref().eq(search_term.as_ref()) } )
-            .flat_map(|(_,value) | value )
-            .next())
+        borrow_checker(
+            self.collection
+                .iter()
+                .filter(|(key, _)| -> bool { key.as_ref().eq(search_term.as_ref()) })
+                .flat_map(|(_, value)| value)
+                .next(),
+        )
     }
 
-/*
+    /// returns all values does not perform any splitting
+    pub fn get_all_values<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
+    where
+        S: AsRef<str>,
+    {
+        let coll = self.collection
+            .iter()
+            .filter(|(key, _)| -> bool { key.as_ref().eq(search_term.as_ref()) })
+            .flat_map(|(_, value)| borrow_checker(value))
+            .collect::<Vec<&'b str>>();
+        if coll.is_empty() {
+            None
+        } else {
+            Some(coll.into_boxed_slice())
+        }
+    }
+
+    pub fn plus_split<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
+    where
+        S: AsRef<str>,
+    {
+        self.abstract_split(search_term, '+')
+    }
+
+    pub fn comma_split<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
+    where
+        S: AsRef<str>,
+    {
+        self.abstract_split(search_term, ',')
+    }
+
+    pub fn plus_split_all<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
+    where
+        S: AsRef<str>,
+    {
+        self.abstract_split_all(search_term, '+')
+    }
+
+    pub fn comma_split_all<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
+    where
+        S: AsRef<str>,
+    {
+        self.abstract_split_all(search_term, ',')
+    }
+
+    /*
     /// `get_value` returns the value(s) associated with a key.
     ///
     /// ## Note
@@ -274,6 +320,45 @@ impl<'a> QueryData<'a> {
         }
     }
 */
+    fn abstract_split_all<'b, A>(
+        &'b self,
+        search_term: &A,
+        splitter: char,
+    ) -> Option<Box<[&'b str]>>
+    where
+        A: AsRef<str>,
+    {
+        collect_into(
+            self.collection
+                .iter()
+                .filter(|(key, _)| -> bool { key.as_ref().eq(search_term.as_ref()) })
+                .flat_map(|(_, value)| borrow_checker(value))
+                .flat_map(|value| value.split(splitter)),
+        )
+    }
+
+    fn abstract_split<'b, A>(&'b self, search_term: &A, splitter: char) -> Option<Box<[&'b str]>>
+    where
+        A: AsRef<str>,
+    {
+        collect_into(self.get_first_value_for(search_term).iter().flat_map(
+            |arg| {
+                arg.split(splitter)
+            },
+        ))
+    }
+}
+
+fn collect_into<'a, I>(iter: I) -> Option<Box<[&'a str]>>
+where
+    I: IntoIterator<Item = &'a str>,
+{
+    let vec = iter.into_iter().collect::<Vec<_>>();
+    if vec.is_empty() {
+        None
+    } else {
+        Some(vec.into_boxed_slice())
+    }
 }
 
 
@@ -403,12 +488,16 @@ fn full_details<'a>(arg: &'a str) -> Option<&'a str> {
 }
 
 #[inline(always)]
-fn borrow_checker<'a>(arg: Option<&'a Box<str>>) -> Option<&'a str> {
-    match arg {
+fn borrow_checker<'a, T>(arg: T) -> Option<&'a str>
+where
+    T: Into<Option<&'a Box<str>>> + 'a,
+{
+    match arg.into() {
         Option::Some(data) => Some(&*data),
-        Option::None => None
+        Option::None => None,
     }
 }
+
 
 mod test {
 
@@ -520,4 +609,3 @@ mod test {
         test_data.validate().unwrap();
     }
 }
-

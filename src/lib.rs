@@ -1,5 +1,5 @@
 
-#![allow(dead_code)]
+#![allow(dead_code,unused_imports)]
 #![allow(clippy::needless_lifetimes,
 clippy::option_option,clippy::clone_on_copy,clippy::clone_double_ref)]
 
@@ -247,7 +247,7 @@ impl Url {
         self.data.get_path_str()
     }
 
-/*
+    /*
     /// `get_query_info` returns information about query parameters
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
         self.data.get_query_info()
