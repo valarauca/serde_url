@@ -456,9 +456,127 @@
 <span id="456">456</span>
 <span id="457">457</span>
 <span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
 </pre><div class="example-wrap"><pre class="rust ">
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">net</span>::{<span class="ident">Ipv4Addr</span>, <span class="ident">Ipv6Addr</span>, <span class="ident">IpAddr</span>, <span class="ident">SocketAddr</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>, <span class="ident">Display</span>};
@@ -479,7 +597,7 @@
     <span class="ident">password</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>,
     <span class="ident">path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>,
     <span class="ident">full_query</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>,
-    <span class="ident">query_key_values</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">query_key_values</span>: <span class="ident">Box</span><span class="op">&lt;</span>[(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>)]<span class="op">&gt;</span>,
 }
 <span class="kw">impl</span> <span class="ident">PrivateUrl</span> {
     <span class="doccomment">/// `new` handles parsing a URL input</span>
@@ -510,7 +628,7 @@
         <span class="kw">let</span> <span class="ident">query_key_values</span> <span class="op">=</span> <span class="ident">url_data</span>
             .<span class="ident">query_pairs</span>()
             .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">key</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="op">-&gt;</span> (<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>) {
-                <span class="kw">let</span> <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">value</span>.<span class="ident">len</span>() <span class="op">!=</span> <span class="number">0</span> {
+                <span class="kw">let</span> <span class="ident">value</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">value</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
                     <span class="prelude-val">Some</span>(<span class="ident">value</span>.<span class="ident">to_string</span>().<span class="ident">into_boxed_str</span>())
                 } <span class="kw">else</span> {
                     <span class="prelude-val">None</span>
@@ -518,7 +636,8 @@
                 <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">key</span>.<span class="ident">to_string</span>().<span class="ident">into_boxed_str</span>();
                 (<span class="ident">key</span>, <span class="ident">value</span>)
             })
-            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span><span class="op">&gt;&gt;</span>();
+            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>)<span class="op">&gt;&gt;</span>()
+            .<span class="ident">into_boxed_slice</span>();
 
         <span class="prelude-val">Ok</span>(<span class="ident">PrivateUrl</span> {
             <span class="ident">url_data</span>,
@@ -626,6 +745,7 @@
         <span class="self">self</span>.<span class="ident">path</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">path</span><span class="op">|</span> <span class="ident">path</span>.<span class="ident">as_ref</span>()).<span class="ident">next</span>()
     }
 
+
     <span class="doccomment">/// `get_query_info` returns information about query parameters</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_query_info</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">QueryData</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
@@ -639,12 +759,13 @@
     }
 }
 
+
 <span class="doccomment">/// QueryData contains information about the URL&#39;s query key</span>
 <span class="doccomment">/// values. As well as information about the query string</span>
 <span class="doccomment">/// itself.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">QueryData</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="ident">full_query</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
-    <span class="ident">collection</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">collection</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>)],
 }
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">QueryData</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="doccomment">/// `get_full_query` attempts to return the percentage decoded query string</span>
@@ -652,32 +773,138 @@
         <span class="self">self</span>.<span class="ident">full_query</span>
     }
 
-    <span class="doccomment">/// `key_exists` checks if a query value exists</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">key_exists</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
+    <span class="doccomment">/// checks if a query value exists. Does not check if the value</span>
+    <span class="doccomment">/// exists.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">key_exists</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     {
-        <span class="self">self</span>.<span class="ident">collection</span>.<span class="ident">get</span>(<span class="ident">key</span>.<span class="ident">as_ref</span>()).<span class="ident">is_some</span>()
+        <span class="self">self</span>.<span class="ident">collection</span>
+            .<span class="ident">iter</span>()
+            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="ident">key</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="ident">key</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="ident">search_term</span>.<span class="ident">as_ref</span>()) })
+            .<span class="ident">next</span>()
+            .<span class="ident">is_some</span>()
     }
 
-    <span class="doccomment">/// `get_key` returns the value(s) associated with a key.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ## Note</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// This method may return the strange value `Option::Some(Some::None)`</span>
-    <span class="doccomment">/// what this means is that a `key` is present, but it has no values associated</span>
-    <span class="doccomment">/// with it, or those values have zero lenght.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">key</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span><span class="op">&gt;&gt;</span>
+    <span class="doccomment">/// returns the first value for a key.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_first_value_for</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">collection</span>.<span class="ident">get</span>(<span class="ident">key</span>.<span class="ident">as_ref</span>()) {
-            <span class="prelude-ty">Option</span>::<span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            <span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>::<span class="prelude-val">None</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">None</span>),
-            <span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">arg</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Some</span>(<span class="ident">arg</span>)),
+        <span class="ident">borrow_checker</span>(
+            <span class="self">self</span>.<span class="ident">collection</span>
+                .<span class="ident">iter</span>()
+                .<span class="ident">filter</span>(<span class="op">|</span>(<span class="ident">key</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="ident">key</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="ident">search_term</span>.<span class="ident">as_ref</span>()) })
+                .<span class="ident">flat_map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">value</span>)
+                .<span class="ident">next</span>(),
+        )
+    }
+
+    <span class="doccomment">/// returns all values does not perform any splitting</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_all_values</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="kw">let</span> <span class="ident">coll</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">collection</span>
+            .<span class="ident">iter</span>()
+            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="ident">key</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="ident">key</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="ident">search_term</span>.<span class="ident">as_ref</span>()) })
+            .<span class="ident">flat_map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">borrow_checker</span>(<span class="ident">value</span>))
+            .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span><span class="op">&gt;&gt;</span>();
+        <span class="kw">if</span> <span class="ident">coll</span>.<span class="ident">is_empty</span>() {
+            <span class="prelude-val">None</span>
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">coll</span>.<span class="ident">into_boxed_slice</span>())
         }
     }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">plus_split</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">abstract_split</span>(<span class="ident">search_term</span>, <span class="string">&#39;+&#39;</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">comma_split</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">abstract_split</span>(<span class="ident">search_term</span>, <span class="string">&#39;,&#39;</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">plus_split_all</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">abstract_split_all</span>(<span class="ident">search_term</span>, <span class="string">&#39;+&#39;</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">comma_split_all</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="self">self</span>.<span class="ident">abstract_split_all</span>(<span class="ident">search_term</span>, <span class="string">&#39;,&#39;</span>)
+    }
+
+    <span class="comment">/*
+    /// `get_value` returns the value(s) associated with a key.
+    ///
+    /// ## Note
+    ///
+    /// This method may return the strange value `Option::Some(Some::None)`
+    /// what this means is that a `key` is present, but it has no values associated
+    /// with it, or those values have zero lenght.
+    pub fn get_key&lt;&#39;b, S&gt;(&amp;&#39;b self, key: &amp;S) -&gt; Option&lt;Option&lt;&amp;&#39;b str&gt;&gt;
+    where
+        S: AsRef&lt;str&gt;,
+    {
+        match self.collection.get(key.as_ref()) {
+            Option::None =&gt; None,
+            Option::Some(&amp;Option::None) =&gt; Some(None),
+            Option::Some(&amp;Option::Some(ref arg)) =&gt; Some(Some(arg)),
+        }
+    }
+*/</span>
+    <span class="kw">fn</span> <span class="ident">abstract_split_all</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">A</span><span class="op">&gt;</span>(
+        <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>,
+        <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">A</span>,
+        <span class="ident">splitter</span>: <span class="ident">char</span>,
+    ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">A</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="ident">collect_into</span>(
+            <span class="self">self</span>.<span class="ident">collection</span>
+                .<span class="ident">iter</span>()
+                .<span class="ident">filter</span>(<span class="op">|</span>(<span class="ident">key</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="ident">key</span>.<span class="ident">as_ref</span>().<span class="ident">eq</span>(<span class="ident">search_term</span>.<span class="ident">as_ref</span>()) })
+                .<span class="ident">flat_map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">value</span>)<span class="op">|</span> <span class="ident">borrow_checker</span>(<span class="ident">value</span>))
+                .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">value</span><span class="op">|</span> <span class="ident">value</span>.<span class="ident">split</span>(<span class="ident">splitter</span>)),
+        )
+    }
+
+    <span class="kw">fn</span> <span class="ident">abstract_split</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">A</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">A</span>, <span class="ident">splitter</span>: <span class="ident">char</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">A</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
+    {
+        <span class="ident">collect_into</span>(<span class="self">self</span>.<span class="ident">get_first_value_for</span>(<span class="ident">search_term</span>).<span class="ident">iter</span>().<span class="ident">flat_map</span>(
+            <span class="op">|</span><span class="ident">arg</span><span class="op">|</span> {
+                <span class="ident">arg</span>.<span class="ident">split</span>(<span class="ident">splitter</span>)
+            },
+        ))
+    }
 }
+
+<span class="kw">fn</span> <span class="ident">collect_into</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">I</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">I</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span>,
+{
+    <span class="kw">let</span> <span class="ident">vec</span> <span class="op">=</span> <span class="ident">iter</span>.<span class="ident">into_iter</span>().<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>();
+    <span class="kw">if</span> <span class="ident">vec</span>.<span class="ident">is_empty</span>() {
+        <span class="prelude-val">None</span>
+    } <span class="kw">else</span> {
+        <span class="prelude-val">Some</span>(<span class="ident">vec</span>.<span class="ident">into_boxed_slice</span>())
+    }
+}
+
 
 <span class="doccomment">/// Host encodes information about host file</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Host</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
@@ -802,6 +1029,17 @@
 <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
 <span class="kw">fn</span> <span class="ident">full_details</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">arg</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="ident">arg</span>.<span class="ident">is_empty</span>() { <span class="prelude-val">None</span> } <span class="kw">else</span> { <span class="prelude-val">Some</span>(<span class="ident">arg</span>) }
+}
+
+<span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
+<span class="kw">fn</span> <span class="ident">borrow_checker</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">arg</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;a</span>,
+{
+    <span class="kw">match</span> <span class="ident">arg</span>.<span class="ident">into</span>() {
+        <span class="prelude-ty">Option</span>::<span class="prelude-val">Some</span>(<span class="ident">data</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">data</span>),
+        <span class="prelude-ty">Option</span>::<span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+    }
 }
 
 

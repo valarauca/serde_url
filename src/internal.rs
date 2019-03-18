@@ -50,7 +50,7 @@ impl PrivateUrl {
         let query_key_values = url_data
             .query_pairs()
             .map(|(key, value)| -> (Box<str>, Option<Box<str>>) {
-                let value: Option<Box<str>> = if value.len() != 0 {
+                let value: Option<Box<str>> = if value.len() > 0 {
                     Some(value.to_string().into_boxed_str())
                 } else {
                     None
@@ -168,7 +168,6 @@ impl PrivateUrl {
     }
 
 
-    /*
     /// `get_query_info` returns information about query parameters
     #[inline(always)]
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
@@ -180,39 +179,6 @@ impl PrivateUrl {
             }),
         }
     }
-*/
-}
-
-
-/// UrlParameterValue encodes the myriad different values
-/// that can be represented by a `url` parameter.
-pub struct UrlParameterValue<'a> {
-    string_value: &'a str,
-    internal: Option<Box<[&'a str]>>,
-}
-impl<'a> UrlParameterValue<'a> {
-    /// `get_string` returns the percentage decoded value
-    pub fn get_string<'b>(&'b self) -> &'b str {
-        &self.string_value
-    }
-
-    /// `get_values` returns if there are multiple values for a representation
-    pub fn get_values<'b>(&'b self) -> Option<&'b [&'b str]> {
-        match self.internal {
-            Option::None => None,
-            Option::Some(ref internal) => Some(internal),
-        }
-    }
-
-    /*
-    fn duck_typing<'b,I,T>(duck: I) -> Option<UrlParameterValue<'b>>
-    where
-        T: Into<Option<&'b str>>,
-        I: Into<Option<IntoIterator<Item=A>>>,
-    {
-        arg.into().into_iter().flat_map(|iter| iter)
-    }
-    */
 }
 
 
@@ -229,7 +195,8 @@ impl<'a> QueryData<'a> {
         self.full_query
     }
 
-    /// `key_exists` checks if a query value exists
+    /// checks if a query value exists. Does not check if the value
+    /// exists.
     pub fn key_exists<S>(&self, search_term: &S) -> bool
     where
         S: AsRef<str>,
