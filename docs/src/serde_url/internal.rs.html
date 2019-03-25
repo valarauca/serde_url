@@ -575,6 +575,35 @@
 <span id="575">575</span>
 <span id="576">576</span>
 <span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
 </pre><div class="example-wrap"><pre class="rust ">
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
@@ -745,7 +774,6 @@
         <span class="self">self</span>.<span class="ident">path</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">path</span><span class="op">|</span> <span class="ident">path</span>.<span class="ident">as_ref</span>()).<span class="ident">next</span>()
     }
 
-
     <span class="doccomment">/// `get_query_info` returns information about query parameters</span>
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_query_info</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">QueryData</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
@@ -759,10 +787,15 @@
     }
 }
 
-
-<span class="doccomment">/// QueryData contains information about the URL&#39;s query key</span>
-<span class="doccomment">/// values. As well as information about the query string</span>
-<span class="doccomment">/// itself.</span>
+<span class="doccomment">/// Information about query parameters</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [FUN stuff](http://dwarffortresswiki.org/index.php/v0.34:Losing) in here.</span>
+<span class="doccomment">/// None of this is standardized _at all_, and every framework has its own</span>
+<span class="doccomment">/// opinion.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// So instead of sanely supporting whatever `go-lang` does, we just offer</span>
+<span class="doccomment">/// a handful of options. Worse case scenario define your own wrapper</span>
+<span class="doccomment">/// type its zero cost abstraction.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">QueryData</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="ident">full_query</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
     <span class="ident">collection</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>)],
@@ -775,6 +808,24 @@
 
     <span class="doccomment">/// checks if a query value exists. Does not check if the value</span>
     <span class="doccomment">/// exists.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com/?key=value&quot;;</span>
+    <span class="doccomment">/// let url = Url::new(&amp;data).unwrap();</span>
+    <span class="doccomment">/// let query_data = url.get_query_data().unwrap();</span>
+    <span class="doccomment">/// assert!(query_data.key_exists(&amp;&quot;key&quot;));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com/?foo=value&quot;;</span>
+    <span class="doccomment">/// let url = Url::new(&amp;data).unwrap();</span>
+    <span class="doccomment">/// let query_data = url.get_query_data().unwrap();</span>
+    <span class="doccomment">/// assert!(!query_data.key_exists(&amp;&quot;bar&quot;));</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">key_exists</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
@@ -786,7 +837,27 @@
             .<span class="ident">is_some</span>()
     }
 
-    <span class="doccomment">/// returns the first value for a key.</span>
+    <span class="doccomment">/// Returns the first value for a key.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Why bother specifying?</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com/?bar=&amp;bar=foo&quot;;</span>
+    <span class="doccomment">/// let url = Url::new(&amp;data).unwrap();</span>
+    <span class="doccomment">/// let query_data = url.get_query_data().unwrap();</span>
+    <span class="doccomment">/// assert!(query_data.get_first_value_for(&amp;&quot;bar&quot;).unwrap() == &quot;foo&quot;);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com/?bar=foo2&amp;bar=foo1&quot;;</span>
+    <span class="doccomment">/// let url = Url::new(&amp;data).unwrap();</span>
+    <span class="doccomment">/// let query_data = url.get_query_data().unwrap();</span>
+    <span class="doccomment">/// assert!(query_data.get_first_value_for(&amp;&quot;bar&quot;).unwrap() == &quot;foo2&quot;);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_first_value_for</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
@@ -801,6 +872,26 @@
     }
 
     <span class="doccomment">/// returns all values does not perform any splitting</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com/?bar=foo2&amp;bar=foo1&quot;;</span>
+    <span class="doccomment">/// let url = Url::new(&amp;data).unwrap();</span>
+    <span class="doccomment">/// let query_data = url.get_query_data().unwrap();</span>
+    <span class="doccomment">/// let expected = &amp;[&quot;foo2&quot;, &quot;foo1&quot;];</span>
+    <span class="doccomment">/// assert!(query_data.get_all_values(&amp;&quot;bar&quot;).unwrap().as_ref().eq(expected));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// use serde_url::Url;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let data = &quot;https://google.com/?bar=foo2&amp;bar=foo1,foo3&quot;;</span>
+    <span class="doccomment">/// let url = Url::new(&amp;data).unwrap();</span>
+    <span class="doccomment">/// let query_data = url.get_query_data().unwrap();</span>
+    <span class="doccomment">/// let expected = &amp;[&quot;foo2&quot;, &quot;foo1,foo3&quot;];</span>
+    <span class="doccomment">/// assert!(query_data.get_all_values(&amp;&quot;bar&quot;).unwrap().as_ref().eq(expected));</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_all_values</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
@@ -817,25 +908,11 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">plus_split</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
-    {
-        <span class="self">self</span>.<span class="ident">abstract_split</span>(<span class="ident">search_term</span>, <span class="string">&#39;+&#39;</span>)
-    }
-
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">comma_split</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
     <span class="kw">where</span>
         <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
     {
         <span class="self">self</span>.<span class="ident">abstract_split</span>(<span class="ident">search_term</span>, <span class="string">&#39;,&#39;</span>)
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">plus_split_all</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
-    {
-        <span class="self">self</span>.<span class="ident">abstract_split_all</span>(<span class="ident">search_term</span>, <span class="string">&#39;+&#39;</span>)
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">comma_split_all</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>]<span class="op">&gt;&gt;</span>
@@ -845,25 +922,6 @@
         <span class="self">self</span>.<span class="ident">abstract_split_all</span>(<span class="ident">search_term</span>, <span class="string">&#39;,&#39;</span>)
     }
 
-    <span class="comment">/*
-    /// `get_value` returns the value(s) associated with a key.
-    ///
-    /// ## Note
-    ///
-    /// This method may return the strange value `Option::Some(Some::None)`
-    /// what this means is that a `key` is present, but it has no values associated
-    /// with it, or those values have zero lenght.
-    pub fn get_key&lt;&#39;b, S&gt;(&amp;&#39;b self, key: &amp;S) -&gt; Option&lt;Option&lt;&amp;&#39;b str&gt;&gt;
-    where
-        S: AsRef&lt;str&gt;,
-    {
-        match self.collection.get(key.as_ref()) {
-            Option::None =&gt; None,
-            Option::Some(&amp;Option::None) =&gt; Some(None),
-            Option::Some(&amp;Option::Some(ref arg)) =&gt; Some(Some(arg)),
-        }
-    }
-*/</span>
     <span class="kw">fn</span> <span class="ident">abstract_split_all</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">A</span><span class="op">&gt;</span>(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>,
         <span class="ident">search_term</span>: <span class="kw-2">&amp;</span><span class="ident">A</span>,

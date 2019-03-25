@@ -167,7 +167,6 @@ impl PrivateUrl {
         self.path.iter().map(|path| path.as_ref()).next()
     }
 
-
     /// `get_query_info` returns information about query parameters
     #[inline(always)]
     pub fn get_query_info<'a>(&'a self) -> Option<QueryData<'a>> {
@@ -181,10 +180,15 @@ impl PrivateUrl {
     }
 }
 
-
-/// QueryData contains information about the URL's query key
-/// values. As well as information about the query string
-/// itself.
+/// Information about query parameters
+///
+/// [FUN stuff](http://dwarffortresswiki.org/index.php/v0.34:Losing) in here.
+/// None of this is standardized _at all_, and every framework has its own
+/// opinion.
+///
+/// So instead of sanely supporting whatever `go-lang` does, we just offer
+/// a handful of options. Worse case scenario define your own wrapper
+/// type its zero cost abstraction.
 pub struct QueryData<'a> {
     full_query: &'a str,
     collection: &'a [(Box<str>, Option<Box<str>>)],
@@ -197,6 +201,24 @@ impl<'a> QueryData<'a> {
 
     /// checks if a query value exists. Does not check if the value
     /// exists.
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com/?key=value";
+    /// let url = Url::new(&data).unwrap();
+    /// let query_data = url.get_query_data().unwrap();
+    /// assert!(query_data.key_exists(&"key"));
+    /// ```
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com/?foo=value";
+    /// let url = Url::new(&data).unwrap();
+    /// let query_data = url.get_query_data().unwrap();
+    /// assert!(!query_data.key_exists(&"bar"));
+    /// ```
     pub fn key_exists<S>(&self, search_term: &S) -> bool
     where
         S: AsRef<str>,
@@ -208,7 +230,27 @@ impl<'a> QueryData<'a> {
             .is_some()
     }
 
-    /// returns the first value for a key.
+    /// Returns the first value for a key.
+    ///
+    /// Why bother specifying?
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com/?bar=&bar=foo";
+    /// let url = Url::new(&data).unwrap();
+    /// let query_data = url.get_query_data().unwrap();
+    /// assert!(query_data.get_first_value_for(&"bar").unwrap() == "foo");
+    /// ```
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com/?bar=foo2&bar=foo1";
+    /// let url = Url::new(&data).unwrap();
+    /// let query_data = url.get_query_data().unwrap();
+    /// assert!(query_data.get_first_value_for(&"bar").unwrap() == "foo2");
+    /// ```
     pub fn get_first_value_for<'b, S>(&'b self, search_term: &S) -> Option<&'b str>
     where
         S: AsRef<str>,
@@ -223,6 +265,26 @@ impl<'a> QueryData<'a> {
     }
 
     /// returns all values does not perform any splitting
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com/?bar=foo2&bar=foo1";
+    /// let url = Url::new(&data).unwrap();
+    /// let query_data = url.get_query_data().unwrap();
+    /// let expected = &["foo2", "foo1"];
+    /// assert!(query_data.get_all_values(&"bar").unwrap().as_ref().eq(expected));
+    /// ```
+    ///
+    /// ```
+    /// use serde_url::Url;
+    ///
+    /// let data = "https://google.com/?bar=foo2&bar=foo1,foo3";
+    /// let url = Url::new(&data).unwrap();
+    /// let query_data = url.get_query_data().unwrap();
+    /// let expected = &["foo2", "foo1,foo3"];
+    /// assert!(query_data.get_all_values(&"bar").unwrap().as_ref().eq(expected));
+    /// ```
     pub fn get_all_values<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
     where
         S: AsRef<str>,
@@ -239,25 +301,11 @@ impl<'a> QueryData<'a> {
         }
     }
 
-    pub fn plus_split<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
-    where
-        S: AsRef<str>,
-    {
-        self.abstract_split(search_term, '+')
-    }
-
     pub fn comma_split<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
     where
         S: AsRef<str>,
     {
         self.abstract_split(search_term, ',')
-    }
-
-    pub fn plus_split_all<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
-    where
-        S: AsRef<str>,
-    {
-        self.abstract_split_all(search_term, '+')
     }
 
     pub fn comma_split_all<'b, S>(&'b self, search_term: &S) -> Option<Box<[&'b str]>>
@@ -267,25 +315,6 @@ impl<'a> QueryData<'a> {
         self.abstract_split_all(search_term, ',')
     }
 
-    /*
-    /// `get_value` returns the value(s) associated with a key.
-    ///
-    /// ## Note
-    ///
-    /// This method may return the strange value `Option::Some(Some::None)`
-    /// what this means is that a `key` is present, but it has no values associated
-    /// with it, or those values have zero lenght.
-    pub fn get_key<'b, S>(&'b self, key: &S) -> Option<Option<&'b str>>
-    where
-        S: AsRef<str>,
-    {
-        match self.collection.get(key.as_ref()) {
-            Option::None => None,
-            Option::Some(&Option::None) => Some(None),
-            Option::Some(&Option::Some(ref arg)) => Some(Some(arg)),
-        }
-    }
-*/
     fn abstract_split_all<'b, A>(
         &'b self,
         search_term: &A,
