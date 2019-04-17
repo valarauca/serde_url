@@ -8,3 +8,4 @@ sourcesIndex["smallvec"] = {"name":"","dirs":[],"files":["lib.rs"]};
 sourcesIndex["unicode_bidi"] = {"name":"","dirs":[{"name":"char_data","dirs":[],"files":["mod.rs","tables.rs"]}],"files":["deprecated.rs","explicit.rs","format_chars.rs","implicit.rs","level.rs","lib.rs","prepare.rs"]};
 sourcesIndex["unicode_normalization"] = {"name":"","dirs":[],"files":["decompose.rs","lib.rs","normalize.rs","quick_check.rs","recompose.rs","stream_safe.rs","tables.rs"]};
 sourcesIndex["url"] = {"name":"","dirs":[],"files":["encoding.rs","form_urlencoded.rs","host.rs","lib.rs","origin.rs","parser.rs","path_segments.rs","quirks.rs","slicing.rs"]};
+createSourceSidebar();
