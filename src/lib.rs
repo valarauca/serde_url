@@ -4,6 +4,23 @@
 clippy::option_option,clippy::clone_on_copy,clippy::clone_double_ref,
 clippy::filter_next,clippy::match_as_ref,clippy::type_complexity)]
 
+//! `serde_url`
+//!
+//! Attempting to making URL serialization/deserialization less painful.
+//! Honestly it isn't so bad, just annotations always feel weird.
+//!
+//! A lot of compatibility out of the box with many `std` library traits
+//!
+//! ```
+//! use serde_url::Url;
+//! let data = "https://google.com/";
+//! let url = match Url::new(&data) {
+//!     Err(e) => panic!("failed to parse url:{} error:{:?}", data, e),
+//!     Ok(url) => url,
+//! };
+//! assert_eq!(url, "https://google.com/");
+//! ```
+
 use std::str;
 use std::fmt;
 use std::sync;
@@ -25,8 +42,8 @@ pub use self::internal::{Origin, Host, QueryData};
 /// Opaque type that can be serialized/deserialized and acts
 /// like a string.
 ///
-/// The goal is not URL maniplutation, but rather reading and
-/// writing URL's, as well as ensuring a consistent format.
+/// The goal is not URL maniplutation, but rather serializing
+/// and deserializing URL's without extra annotations.
 ///
 /// # Note Usernames/Passwords
 ///
@@ -48,7 +65,7 @@ impl Url {
     /// ```
     /// use serde_url::Url;
     ///
-    /// let data = "https://google.com";
+    /// let data = "https://google.com/";
     /// let url = match Url::new(&data) {
     ///     Err(e) => panic!("failed to parse url:{} error:{:?}", data, e),
     ///     Ok(url) => url,

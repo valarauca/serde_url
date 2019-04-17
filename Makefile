@@ -10,6 +10,7 @@ test:
 	cargo clippy
 	cargo fmt -- -f
 	rm -rf src/*.rs.bk
+	rm -rf test/*.rs.bk
 
 .PHONY: doc
 doc: docs
