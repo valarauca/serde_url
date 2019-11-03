@@ -1,6 +1,6 @@
 [package]
 name = "serde_url"
-version = "0.9.0"
+version = "0.9.1"
 authors = ["William Cody Laeder <codylaeder@gmail.com>"]
 documentation = "https://valarauca.github.io/serde_url/serde_url/index.html"
 homepage = "https://github.com/valarauca/serde_url"
